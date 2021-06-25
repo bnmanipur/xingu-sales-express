@@ -1,0 +1,433 @@
+extends layout
+
+block content
+    style.
+        .modal-body {
+            display: flow-root
+        }
+
+    h4 Repairing
+    br
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#jobModal') Add new job
+    //a.btn.btn-danger Reports
+    #jobModal.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title New Job
+                form#jobcreateform
+                    .modal-body
+                        .form-group.col-md-6
+                            span Date*
+                            input#date.form-control(name='date' type='date' value=moment().format('yyyy-MM-D') placeholder='Date')
+                        .form-group.col-md-6
+                            span Job No.*
+                            input#job_no.form-control(name='job_no' placeholder='Job No.')
+                        .form-group.col-md-12
+                            span Customer Name*
+                            input#customer_name.form-control(name='customer_name' placeholder='Customer Name')
+                        .form-group.col-md-12
+                            span Contact*
+                            input#contact.form-control(name='contact' maxlength='10' placeholder='Contact')
+                        .form-group.col-md-12
+                            span Address
+                            input#address.form-control(name='address' placeholder='Address')
+                        .form-group.col-md-12
+                            span Product
+                            input#product.form-control(name='product' placeholder='Product')
+                        .form-group.col-md-12
+                            span Problem
+                            input#problem.form-control(name='problem' placeholder='Problem')
+                        .form-group.col-md-12
+                            span Accessories
+                            input#accessories.form-control(name='accessories' placeholder='Accessories')
+                        .form-group.col-md-12
+                            button.btn.btn-default(type='button' data-dismiss='modal') Close
+                            button#add_job_btn.btn.btn-success(type='button') Save
+    #jobEditModal.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Edit Job
+                form#jobeditform
+                    .modal-body
+                        .form-group.col-md-6
+                            span Date
+                            input#edit_date.form-control(name='date' type='date' disabled='' placeholder='Date')
+                        .form-group.col-md-6
+                            span Job No.*
+                            input#edit_job_no.form-control(name='job_no' disabled='' placeholder='Job No.')
+                        .form-group.col-md-12
+                            span Customer Name*
+                            input#edit_customer_name.form-control(name='customer_name' disabled='' placeholder='Customer Name')
+                        .form-group.col-md-12
+                            span Contact*
+                            input#edit_contact.form-control(name='contact' disabled='' placeholder='Contact')
+                        .form-group.col-md-12
+                            span Address
+                            input#edit_address.form-control(name='address' disabled='' placeholder='Address')
+                        .form-group.col-md-12
+                            span Product
+                            input#edit_product.form-control(name='product' disabled='' placeholder='Product')
+                        .form-group.col-md-12
+                            span Problem
+                            input#edit_problem.form-control(name='problem' disabled='' placeholder='Problem')
+                        .form-group.col-md-12
+                            span Accessories
+                            input#edit_accessories.form-control(name='accessories' disabled='' placeholder='Accessories')
+                        .form-group.col-md-12
+                            span Worked
+                            input#edit_worked.form-control(name='worked' placeholder='Worked')
+                        .form-group.col-md-4
+                            span Advanced Payment
+                            input#edit_advanced_payment.form-control(name='advanced_payment' placeholder='Advanced Payment' oninput='calculate_edit_delivery_payment()')
+                        .form-group.col-md-4
+                            span Total Amount
+                            input#edit_total_payment.form-control(name='total_payment' placeholder='Total Amount' oninput='calculate_edit_delivery_payment()')
+                        .form-group.col-md-4
+                            span Delivery Payment
+                            input#edit_delivery_payment.form-control(name='delivery_payment' disabled='' placeholder='Delivery Payment')
+                        .form-group.col-md-4
+                            | Courier
+                            br
+                            label.switch
+                                input#edit_courier(type='checkbox' name='courier')
+                                span.slider.round
+                        .form-group.col-md-4
+                            | Delivered
+                            br
+                            label.switch
+                                input#edit_delivered(type='checkbox' name='delivered' onclick='check_credit()')
+                                span.slider.round
+                        .form-group.col-md-4
+                            | Credit
+                            br
+                            label.switch
+                                input#edit_credit(type='checkbox' name='credit')
+                                span.slider.round
+                        .courier
+                            .form-group.col-md-12
+                                span Where
+                                input#edit_courier_place.form-control(name='courier_place' placeholder='Where')
+                            .form-group.col-md-6
+                                span Courier Dispacted
+                                input#edit_courier_dispacted.form-control(name='courier_dispacted' placeholder='Courier Dispatched' type='date')
+                            .form-group.col-md-6
+                                span Courier Recieved
+                                input#edit_courier_recieved.form-control(name='courier_recieved' placeholder='Courier Recieved' type='date')
+                            .form-group.col-md-6
+                                span Courier Returned
+                                input#edit_courier_returned.form-control(name='courier_returned' placeholder='Courier Returned' type='date')
+                            .form-group.col-md-6
+                                span Courier Delivered
+                                input#edit_courier_delivered.form-control(name='courier_delivered' placeholder='Courier Delivered' type='date')
+                        .form-group.col-md-12
+                            button.btn.btn-default(type='button' data-dismiss='modal') Close
+                            button#edit_job_btn.btn.btn-success(type='button' data-dismiss='modal') Confirm
+    .row.mb(style='margin-top: 20px')
+        // page start
+        .content-panel(style='padding:10px')
+            .adv-table
+                table#example.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                    thead
+                        tr
+                            th
+                            th Date
+                            th Job No.
+                            th Customer Name
+                            th Contact
+                            th Address
+                            th Product
+                            th Problem
+                            th Accessories
+                    tbody
+
+block script
+    script(type='text/javascript').
+        var date = `#{moment().format('yyyy-MM-D')}`
+        var tttt;
+        function calculate_edit_delivery_payment() {
+            let advanced_payment = $("input[id=edit_advanced_payment]").val()
+            let total_amount = $("input[id=edit_total_payment]").val()
+            $("input[id=edit_delivery_payment]").val(parseInt(total_amount) - parseInt(advanced_payment))
+        }
+        function check_credit() {
+            let delivered = ($('#edit_delivered').is(':checked')) ? 1 : 0;
+            if (delivered) {
+                $('#edit_credit').removeAttr("disabled");
+                $('#edit_credit').removeAttr("checked")
+            } else {
+                $('#edit_credit').attr("disabled", true);
+            }
+        }
+        function get_job_no_latest() {
+            $.ajax({
+                type: "GET",
+                url: "/admin/repairing/get_latest_jobno",
+                success: function (data) {
+                    $("input[id=job_no]").val(parseInt(data) + 1)
+                }
+            });
+        }
+        $(document).ready(function () {
+            get_job_no_latest()
+            $('#add_job_btn').click(function (event) {
+                let date = $("input[id=date]").val();
+                let job_no = $("input[id=job_no]").val();
+                let customer_name = $("input[id=customer_name]").val();
+                let contact = $("input[id=contact]").val();
+                let address = $("input[id=address]").val();
+                let product = $("input[id=product]").val();
+                let problem = $("input[id=problem]").val();
+                let accessories = $("input[id=accessories]").val();
+                if (!(job_no.length > 0)) {
+                    return alert("Job no. Required.");
+                }
+                if (!(customer_name.length > 0)) {
+                    return alert("Customer Name Required.");
+                }
+                if (!(contact.length > 0)) {
+                    return alert("Contact Required.");
+                }
+                $.ajax({
+                    url: "/admin/repairing/add_job",
+                    type: "POST",
+                    data: {
+                        date: date,
+                        job_no: job_no,
+                        customer_name: customer_name,
+                        contact: contact,
+                        address: address,
+                        product: product,
+                        problem: problem,
+                        accessories: accessories,
+                        _token: $('#add_token').val()
+                    },
+                    success: function (response) {
+                        if (response.success != undefined) {
+                            $('.success').text(response.success);
+                            $("#jobcreateform")[0].reset();
+                            $('#date').val(date)
+                            tttt.ajax.reload();
+                            $('#jobModal').modal('hide');
+                        } else {
+                            alert('Duplicate Job No.')
+                        }
+                    }
+                });
+            })
+        });
+        $(document).ready(function () {
+            $('#edit_courier').change(function () {
+                $('.courier').toggle(this.checked);
+            }).change();
+            $('#edit_job_btn').click(function (event) {
+                let job_no = $("input[id=edit_job_no]").val();
+                let worked = $("input[id=edit_worked]").val();
+                let advanced_payment = $("input[id=edit_advanced_payment]").val();
+                let total_payment = $("input[id=edit_total_payment]").val();
+                let courier_dispatched = $("input[id=edit_courier_dispacted]").val();
+                let courier_recieved = $("input[id=edit_courier_recieved]").val();
+                let courier_returned = $("input[id=edit_courier_returned]").val();
+                let courier_delivered = $("input[id=edit_courier_delivered]").val();
+                let courier = ($('#edit_courier').is(':checked')) ? 1 : 0;
+                let credit = ($('#edit_credit').is(':checked')) ? 1 : 0;
+                let delivered = ($('#edit_delivered').is(':checked')) ? 1 : 0;
+                let place = $("input[id=edit_courier_place]").val();
+                $.ajax({
+                    url: "/admin/repairing/edit_job",
+                    type: "POST",
+                    data: {
+                        job_no: job_no,
+                        worked: worked,
+                        courier: courier,
+                        delivered: delivered,
+                        advanced_payment: advanced_payment,
+                        total_payment: total_payment,
+                        delivered: delivered,
+                        courier_place: place,
+                        courier_dispatched: courier_dispatched,
+                        courier_recieved: courier_recieved,
+                        courier_returned: courier_returned,
+                        courier_delivered: courier_delivered,
+                        credit: credit,
+                        _token: $('#edit_token').val()
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        if (response) {
+                            $('.success').text(response.success);
+                            tttt.ajax.reload();
+                            get_job_no_latest()
+                        }
+                        $("#jobeditform")[0].reset();
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        $("#jobeditform")[0].reset();
+                    }
+                });
+            })
+        });
+        /* Formating function for row details */
+        function format(d) {
+            return '<table cellpadding="5" cellspacing="2" border="0" style="padding-left:50px;width:100%" class="a_table_that_needs_padding">' +
+                '<tbody>' +
+                '<tr>' +
+                '<td>Worked : <br><span style="font-size:16px">' + d.worked + '</span></td>' +
+                '<td>Advanced Payment : <br><span style="font-size:16px">' + d.advanced_payment + '</span></td>' +
+                '<td>Total Amount : <br><span style="font-size:16px">' + d.total_amount + '</span></td>' +
+                '<td>Delivery Payment : <br><span style="font-size:16px">' + (parseInt(d.total_amount) - parseInt(d.advanced_payment)) + '</span></td>' +
+                '<td style="padding-left:20px">Courier <br><label class="switch"><input type="checkbox" name="courier" ' + ((d.is_courier == "1") ? 'checked' : '') + ' disabled="true"><span class="slider round"></span></label></td>' +
+                '<td style="padding-left:20px">Delivered <br><label class="switch"><input type="checkbox" name="delivered" value="delivered" ' + ((d.is_delivered == "1") ? 'checked' : '') + ' disabled="true"><span class="slider round"></span></label></td>' +
+                '<td style="padding-left:20px">Credit <br><label class="switch"><input type="checkbox" name="credit" value="credit" ' + ((d.is_credit == "1") ? 'checked' : '') + ' disabled="true"><span class="slider round"></span></label></td>' +
+                '</tr>' +
+                '<tr ' + ((d.is_courier == "1") ? '' : 'style="display:none"') + '>' +
+                '<td>Where : <br><span style="font-size:16px">' + d.courier_place + '</span></td>' +
+                '</tr>' +
+                '<tr ' + ((d.is_courier == "1") ? '' : 'style="display:none"') + '>' +
+                '<td><label>Courier Dispacted</label><br><span style="font-size:16px">' + d.courier_dispatched + '</span></td>' +
+                '<td><label>Courier Received</label><br><span style="font-size:16px">' + d.courier_recieved + '</span></td>' +
+                '<td><label>Courier Returned</label><br><span style="font-size:16px">' + d.courier_returned + '</span></td>' +
+                '<td><label>Courier Delivered</label><br><span style="font-size:16px">' + d.courier_delivered + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td colspan="4"><label style="margin-top:10px;font-size:15px">Entry by : ' + d.name + '</label></td>' +
+                '<td><a class="btn btn-danger" onclick="delete_action(' + d.jobno + ')" style="width:100px">Delete</a></td>' +
+                '<td><a class="btn btn-danger" onclick="edit_action(' + d.jobno + ')" data-toggle="modal" data-target="#jobEditModal" style="width:100px">Edit</a></td>' +
+                '</tr>' +
+                '</tbody>' +
+                '</table>';
+        }
+        function delete_action(jobno) {
+            if (confirm('Are you sure you want to delete job no ' + jobno + '?')) {
+                $.ajax({
+                    url: "/admin/repairing/delete_job?jobno=" + jobno,
+                    type: "GET",
+                    success: function (response) {
+                        console.log(response);
+                        if (response) {
+                            tttt.ajax.reload();
+                            get_job_no_latest()
+                            alert("Deleted")
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            } else {
+            }
+        }
+        function edit_action(jobno) {
+            $("#jobeditform")[0].reset();
+            $('#edit_job_no').val(jobno);
+            $.ajax({
+                type: "GET",
+                url: "/admin/repairing/get_job?jobno=" + jobno,
+                success: function (data) {
+                    $('#edit_date').val(data.data.date);
+                    $('#edit_customer_name').val(data.data.customer_name);
+                    $('#edit_contact').val(data.data.contact);
+                    $('#edit_address').val(data.data.address);
+                    $('#edit_product').val(data.data.product);
+                    $('#edit_accessories').val(data.data.accessories);
+                    $('#edit_problem').val(data.data.problem);
+                    $('#edit_worked').val(data.data.worked);
+                    $('#edit_advanced_payment').val(data.data.advanced_payment);
+                    $('#edit_total_payment').val(data.data.total_amount);
+                    calculate_edit_delivery_payment()
+                    if (data.data.is_courier == 1) {
+                        $('#edit_courier').attr("checked", true);
+                    } else {
+                        $("#edit_courier").removeAttr("checked");
+                    }
+                    if (data.data.is_delivered == 1) {
+                        $('#edit_delivered').attr("checked", true);
+                    } else {
+                        $("#edit_delivered").removeAttr("checked");
+                    }
+                    if (data.data.is_credit == 1) {
+                        $('#edit_credit').attr("checked", true);
+                    } else {
+                        $("#edit_credit").removeAttr("checked");
+                    }
+                    check_credit()
+                    $('#edit_courier_place').val(data.data.courier_place);
+                    $('#edit_courier_dispacted').val(data.data.courier_dispatched);
+                    $('#edit_courier_recieved').val(data.data.courier_recieved);
+                    $('#edit_courier_returned').val(data.data.courier_returned);
+                    $('#edit_courier_delivered').val(data.data.courier_delivered);
+                }
+            });
+        }
+        $(document).ready(function () {
+            /*
+            * Insert a 'details' column to the table
+            */
+            var nCloneTh = document.createElement('th');
+            var nCloneTd = document.createElement('td');
+            /*
+            * Initialse DataTables, with no sorting on the 'details' column
+            */
+            var oTable = $('#example').DataTable({
+                "ajax": "/admin/repairing/get_list",
+                "columns": [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    {"data": "date"},
+                    {"data": "jobno"},
+                    {"data": "customer_name"},
+                    {"data": "contact"},
+                    {"data": "address"},
+                    {"data": "product"},
+                    {"data": "problem"},
+                    {"data": "accessories"}
+                ],
+                "createdRow": function (row, data, dataIndex) {
+                    if (parseInt(data.is_courier) == 1) {
+                        $(row).addClass("blue")
+                    }
+                    if (parseInt(data.is_delivered) == 1) {
+                        $(row).removeClass("blue")
+                        if (parseInt(data.is_credit) == 1) {
+                            $(row).addClass("lightred")
+                        } else {
+                            $(row).addClass("green")
+                        }
+                    }
+                }
+            });
+            tttt = oTable;
+            /* Add event listener for opening and closing details
+            * Note that the indicator for showing which row is open is not controlled by DataTables,
+            * rather it is done here
+            */
+            $('#example tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = oTable.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    oTable.rows().eq(0).each(function (index) {
+                        var _row = oTable.row(index);
+                        _row.child.hide();
+                        $('.shown').removeClass('shown')
+                    });
+                    // Open this row
+                    row.child(format(row.data())).show();
+                    tr.addClass('shown');
+                }
+            });
+        });
+

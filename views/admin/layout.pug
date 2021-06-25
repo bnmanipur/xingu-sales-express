@@ -1,0 +1,152 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    meta(name='description' content='')
+    meta(name='author' content='Dashboard')
+    meta(name='keyword' content='Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina')
+    title= "Xingu Sales - " + title
+    link(href="/img/favicon.png" rel='icon')
+    link(href="/img/apple-touch-icon.png" rel='apple-touch-icon')
+    link(href="/lib/bootstrap/css/bootstrap.min.css" rel='stylesheet')
+    link(href="/lib/font-awesome/css/font-awesome.css" rel='stylesheet')
+    link(rel='stylesheet' href="/lib/advanced-datatable/css/DT_bootstrap.css")
+    link(href="/css/style.css" rel='stylesheet')
+    link(href="/css/style-responsive.css" rel='stylesheet')
+    style.
+      td.details-control {
+        background: url('/lib/advanced-datatable/images/details_open.png') no-repeat center center;
+        cursor: pointer;
+      }
+      tr.shown td.details-control {
+        background: url('/lib/advanced-datatable/images/details_close.png') no-repeat center center;
+      }
+      .a_table_that_needs_padding td{
+        padding : 5px;
+      }
+      .a_table_that_needs_padding .form-control{
+        margin-top:10px;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        margin-top:5px
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 15px;
+        width: 15px;
+        left: 4px;
+        bottom: 5px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+      input:checked + .slider {
+        background-color: #999706;
+      }
+      input:focus + .slider {
+        box-shadow: 0 0 1px #999706;
+      }
+      input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+      /* Rounded sliders */
+      .slider.round {
+        border-radius: 34px;
+      }
+      .slider.round:before {
+        border-radius: 50%;
+      }
+      .blue {
+        background-color:  #68e1f7 !important;
+      }
+      .green{
+        background-color: #b4ffcb !important;
+      }
+      .lightred{
+        background-color: #ffcccc !important;
+      }
+  body
+    section#container
+      header.header.black-bg
+        .sidebar-toggle-box
+          .fa.fa-bars.tooltips(data-placement='right' data-original-title='Toggle Navigation')
+        a.logo(href='/admin/dashboard')
+          b
+            | XINGU
+            span SALES
+        .top-menu
+          ul.nav.pull-right.top-menu
+            li
+              a.logout(href='logout') Logout
+      aside
+        #sidebar.nav-collapse
+          // sidebar menu start
+          ul#nav-accordion.sidebar-menu
+            li.mt
+              a(href='/admin/dashboard' class=((title + "").toLowerCase() === "dashboard" ? "active" : undefined))
+                i.fa.fa-dashboard
+                span Dashboard
+            li
+              a(href='/admin/quotation' class=((title + "").toLowerCase() === "quotation" ? "active" : undefined))
+                i.fa.fa-envelope
+                span Quotation
+            li
+              a(href='/admin/repairing' class=((title + "").toLowerCase() === "repairing" ? "active" : undefined))
+                i.fa.fa-bar-chart-o
+                span Repairing
+            li
+              a(href='/admin/orders' class=((title + "").toLowerCase() === "orders" ? "active" : undefined))
+                i.fa.fa-comments-o
+                span Orders
+            li
+              a(href='/admin/items' class=((title + "").toLowerCase() === "items" ? "active" : undefined))
+                i.fa.fa-map-marker
+                span Items
+            li.sub-menu
+              a(href='javascript:;')
+                i.fa.fa-cogs
+                span Master
+              ul.sub
+                li
+                  a(href='/admin/master/categories' class=((title + "").toLowerCase() === "categories" ? "active" : undefined)) Categories
+                li
+                  a(href='/admin/master/users' class=((title + "").toLowerCase() === "users" ? "active" : undefined)) Users
+                li
+                  a(href='/admin/master/products' class=((title + "").toLowerCase() === "products" ? "active" : undefined)) Products
+                li
+                  a(href='/admin/master/companies' class=((title + "").toLowerCase() === "companies" ? "active" : undefined)) Companies
+      section#main-content
+        section.wrapper
+          block content
+    script(type='text/javascript' src="/lib/jquery/jquery.min.js")
+    script(src="/lib/bootstrap/js/bootstrap.min.js" type='text/javascript')
+    script(type='text/javascript' language='javascript' src="/lib/advanced-datatable/js/jquery.dataTables.js")
+    script(type='text/javascript' src="/lib/advanced-datatable/js/DT_bootstrap.js")
+    script.include(type='text/javascript' src="/lib/jquery.dcjqaccordion.2.7.js")
+    script(src="/lib/jquery.scrollTo.min.js")
+    script(src="/lib/common-scripts.js")
+    block script

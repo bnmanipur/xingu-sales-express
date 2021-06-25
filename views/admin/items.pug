@@ -1,0 +1,83 @@
+extends layout
+
+block content
+    h4 Items
+    .content-panel(style='padding:10px')
+        .row
+            .col-md-4
+                .form-group
+                    span Name*
+                    input#name.form-control(name='name' type='text' placeholder='Name')
+                .form-group
+                    span Category*
+                    select#role.form-control
+                        option(selected='' hidden='') Select Category
+                        each category in categories
+                            option(value=category.id)= category.name
+                .row
+                    .col-md-6
+                        .form-group
+                            span B2B Price
+                            input#b2bprice.form-control(name='b2bprice' type='text' placeholder='B2B Price')
+                    .col-md-6
+                        .form-group
+                            span Customer Price
+                            input#customerprice.form-control(name='customer_price' type='text' placeholder='Customer Price')
+                    .col-md-6
+                        .form-group
+                            span MRP
+                            input#mrp.form-control(name='mrp' type='text' placeholder='MRP')
+                    .col-md-6
+                        .form-group
+                            span Company Price
+                            input#companyprice.form-control(name='companyprice' type='text' placeholder='Company Price')
+                .form-group
+                    button#add_user.btn.btn-success(type='button') Add
+            .col-md-8
+                .adv-table
+                    table#example.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                        thead
+                            tr
+                                th Name
+                                th Category
+                                th B2B Price
+                                th Customer Price
+                                th MRP
+                                th Company Price
+                                th Actions
+            span  
+
+block script
+    script(type='text/javascript').
+        $(document).ready(function () {
+            var oTable = $('#example').DataTable({
+                "ajax": "/admin/items/get_list",
+                "columns": [
+                    {"data": "name"},
+                    {"data": "category"},
+                    {"data": "dealer_price"},
+                    {"data": "customer_price"},
+                    {"data": "mrp"},
+                    {"data": "company_price"},
+                    {"data": "actions"},
+                ],
+            });
+            $('#add_user').click(function (event) {
+                $.ajax({
+                    url: "/admin/master/items/add",
+                    type: "POST",
+                    data: {
+                        name: $('#name').val(),
+                        pin: $('#pin').val(),
+                        role: $('#role').val(),
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        oTable.ajax.reload();
+                    },
+                    error: function (response) {
+                        console.log(response)
+                    }
+                });
+            });
+        });

@@ -1,0 +1,209 @@
+extends layout
+
+block content
+    h4 Worklist
+    style.
+        .dataTables_wrapper {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .emergence {
+            color: #f54242;
+        }
+
+        .table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+            border: 2px solid #ddd;
+        }
+    br
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#orderModal') Add new order
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#completed') Completed
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#cancelled') Cancelled
+    #completed.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Completed
+                .modal-body(style='display: grid')
+                    .row.mb(style='margin-top: 20px')
+                        // page start
+                        .content-panel(style='padding:10px')
+                            .adv-table
+                                table#example2.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                                    thead
+                                        tr
+                                            th
+                                            th Order Id
+                                            th Date
+                                            th Work Date
+                                            th Client Name
+                                            th Contact
+                                            th Work
+                                            th Address
+                                            th Technicians
+                                            th Payment Type
+                                    tbody
+    #cancelled.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Cancelled
+                .modal-body(style='display: grid')
+                    .row.mb(style='margin-top: 20px')
+                        // page start
+                        .content-panel(style='padding:10px')
+                            .adv-table
+                                table#example3.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                                    thead
+                                        tr
+                                            th
+                                            th Order Id
+                                            th Date
+                                            th Work Date
+                                            th Client Name
+                                            th Contact
+                                            th Work
+                                            th Address
+                                            th Technicians
+                                            th Payment Type
+                                    tbody
+    #orderModal.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content(style='display: inline-block;')
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title New Order
+                .modal-body
+                    form#ordercreatemodel
+                        input#add_token(type='hidden' name='_token' value='{{ csrf_token() }}')
+                        .form-group.col-md-6
+                            span Date*
+                            input#date.form-control(name='date' type='date' value="{{date('Y-m-d')}}" placeholder='Date')
+                        .form-group.col-md-6
+                            span Work Date*
+                            input#work_date.form-control(name='work_date' type='date' value="{{date('Y-m-d')}}" placeholder='Date')
+                        .form-group.col-md-12
+                            span Client Name*
+                            input#client_name.form-control(name='client_name' placeholder='Customer Name')
+                        .form-group.col-md-12
+                            span Contact*
+                            input#contact.form-control(name='contact' maxlength='10' placeholder='Contact')
+                        .form-group.col-md-12
+                            span Address
+                            input#address.form-control(name='address' placeholder='Address')
+                        .form-group.col-md-12
+                            span Work
+                            textarea#work.form-control(name='work' rows='4' cols='50')
+                        .form-group.col-md-6
+                            span Refer By
+                            input#refer_by.form-control(name='refer_by' placeholder='Refer By')
+                        .form-group.col-md-6
+                            span Payment Type
+                            select#payment_type.form-control
+                                option(selected='' hidden='') Payment Type
+                                option(value='full payment') Full Payment
+                                option(value='loan') Loan
+                                option(value='part by part') Part by Part
+                        .form-group.col-md-4
+                            | Emergency
+                            br
+                            label.switch
+                                input#emergency(type='checkbox' name='done')
+                                span.slider.round
+                        .form-group.col-md-12
+                            button.btn.btn-default(type='button' data-dismiss='modal') Close
+                            button#add_order_btn.btn.btn-success(type='button') Save
+    #orderEditModal.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Assign/Edit Order
+                form#orderEditForm
+                    input#edit_token(type='hidden' name='_token' value='{{ csrf_token() }}')
+                    .modal-body(style='display: grid')
+                        .form-group.col-md-6
+                            span Work ID
+                            input#edit_order_no.form-control(name='order_no' disabled='' placeholder='Order No.')
+                        .form-group.col-md-6
+                            span Date
+                            input#edit_date.form-control(name='date' type='date' disabled='' placeholder='Date')
+                        .form-group.col-md-6
+                            span Work Date*
+                            input#edit_work_date.form-control(name='work_date' type='date' disabled='' value="{{date('Y-m-d')}}" placeholder='Date')
+                        .form-group.col-md-6
+                            span Refer By
+                            input#edit_refer_by.form-control(name='refer_by' disabled='' placeholder='Refer By')
+                        .form-group.col-md-6
+                            span Payment Type
+                            select#edit_payment_type.form-control
+                                option(selected='' hidden='') Payment Type
+                                option(value='full payment') Full Payment
+                                option(value='loan') Loan
+                                option(value='part by part') Part by Part
+                        .form-group.col-md-12
+                            span Client Name*
+                            input#edit_client_name.form-control(name='client_name' disabled='' placeholder='Client Name')
+                        .form-group.col-md-12
+                            span Contact*
+                            input#edit_contact.form-control(name='contact' disabled='' placeholder='Contact')
+                        .form-group.col-md-12
+                            span Address
+                            input#edit_address.form-control(name='address' disabled='' placeholder='Address')
+                        .form-group.col-md-12
+                            span Work
+                            textarea#edit_work.form-control(name='work' rows='4' cols='50')
+                        .form-group.col-md-12
+                            span Technicians
+                            textarea#edit_technicians.form-control(name='technicians' rows='4' cols='50')
+                        .form-group.col-md-12
+                            span Remarks
+                            textarea#edit_remarks.form-control(name='remarks' rows='4' cols='50')
+                        .form-group.col-md-4
+                            | Done
+                            br
+                            label.switch
+                                input#edit_done(type='checkbox' name='done')
+                                span.slider.round
+                        .form-group.col-md-4
+                            | Emergency
+                            br
+                            label.switch
+                                input#edit_emergency(type='checkbox' name='done')
+                                span.slider.round
+                        .form-group.col-md-4
+                            | Cancelled
+                            br
+                            label.switch
+                                input#edit_cancelled(type='checkbox' name='done')
+                                span.slider.round
+                        .form-group.col-md-12
+                            button.btn.btn-default(type='button' data-dismiss='modal') Close
+                            button#edit_job_btn.btn.btn-success(type='button' data-dismiss='modal') Confirm
+    .row.mb(style='margin-top: 20px')
+        // page start
+        .content-panel(style='padding:10px')
+            .adv-table
+                table#example.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                    thead
+                        tr(style='background-color: #ddd')
+                            th
+                            th Order Id
+                            th Date
+                            th Work Date
+                            th Client Name
+                            th Contact
+                            th Work
+                            th Address
+                            th Technicians
+                            th Payment Type
+                    tbody
+
+block script
+    

@@ -10,19 +10,22 @@ block content
                     input#name.form-control(name='name' type='text' placeholder='Name')
                 .form-group
                     span Category*
-                    select#role.form-control
+                    select#category.form-control
                         option(selected='' hidden='') Select Category
                         each category in categories
                             option(value=category.id)= category.name
+                .form-group
+                    span Vendor
+                    input#vendor.form-control(name='vendor' type='text' placeholder='Vendor')
                 .row
                     .col-md-6
                         .form-group
                             span B2B Price
-                            input#b2bprice.form-control(name='b2bprice' type='text' placeholder='B2B Price')
+                            input#b2p_price.form-control(name='b2p_price' type='text' placeholder='B2B Price')
                     .col-md-6
                         .form-group
                             span Customer Price
-                            input#customerprice.form-control(name='customer_price' type='text' placeholder='Customer Price')
+                            input#customer_price.form-control(name='customer_price' type='text' placeholder='Customer Price')
                     .col-md-6
                         .form-group
                             span MRP
@@ -30,9 +33,9 @@ block content
                     .col-md-6
                         .form-group
                             span Company Price
-                            input#companyprice.form-control(name='companyprice' type='text' placeholder='Company Price')
+                            input#company_price.form-control(name='company_price' type='text' placeholder='Company Price')
                 .form-group
-                    button#add_user.btn.btn-success(type='button') Add
+                    button#add_item.btn.btn-success(type='button') Add
             .col-md-8
                 .adv-table
                     table#example.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
@@ -40,36 +43,87 @@ block content
                             tr
                                 th Name
                                 th Category
+                                th Vendor
                                 th B2B Price
                                 th Customer Price
                                 th MRP
                                 th Company Price
                                 th Actions
             span  
-
+    #itemEditModel.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Edit Item
+                form
+                    .form-group
+                        span Name*
+                        input#edt_name.form-control(name='name' type='text' placeholder='Name')
+                    .form-group
+                        span Category*
+                        select#edt_category.form-control
+                            option(selected='' hidden='') Select Category
+                            each category in categories
+                                option(value=category.id)= category.name
+                    .form-group
+                        span Vendor
+                        input#edt_vendor.form-control(name='vendor' type='text' placeholder='Vendor')
+                    .row
+                        .col-md-6
+                            .form-group
+                                span B2B Price
+                                input#edt_b2p_price.form-control(name='b2p_price' type='text' placeholder='B2B Price')
+                        .col-md-6
+                            .form-group
+                                span Customer Price
+                                input#edt_customer_price.form-control(name='customer_price' type='text' placeholder='Customer Price')
+                        .col-md-6
+                            .form-group
+                                span MRP
+                                input#edt_mrp.form-control(name='mrp' type='text' placeholder='MRP')
+                        .col-md-6
+                            .form-group
+                                span Company Price
+                                input#edt_company_price.form-control(name='company_price' type='text' placeholder='Company Price')
+                    .form-group
+                        button#edt_edit_item.btn.btn-success(type='button') Add
 block script
     script(type='text/javascript').
+        var oTable;
         $(document).ready(function () {
-            var oTable = $('#example').DataTable({
+            oTable = $('#example').DataTable({
                 "ajax": "/admin/items/get_list",
                 "columns": [
                     {"data": "name"},
                     {"data": "category"},
+                    {"data": "vendor"},
                     {"data": "dealer_price"},
                     {"data": "customer_price"},
                     {"data": "mrp"},
                     {"data": "company_price"},
-                    {"data": "actions"},
+                    {
+                        "data": null,
+                        "sortable" : false,
+                        "render" : function (data, type, row){
+                            return `<a href="#" class="fa fa-pencil" onClick="edit_item('`+row.id+`')" data-toggle="modal" data-target="#itemEditModel"></a> | <a href="#" class="fa fa-trash" onClick="delete_item('`+row.id+`'+)"></a>`
+                        }
+                    },
                 ],
             });
             $('#add_user').click(function (event) {
                 $.ajax({
-                    url: "/admin/master/items/add",
+                    url: "/admin/items/add",
                     type: "POST",
                     data: {
-                        name: $('#name').val(),
-                        pin: $('#pin').val(),
-                        role: $('#role').val(),
+                        name : $('#name').val(),
+                        category: $('#category').val(),
+                        b2p_price: $('#b2p_price').val(),
+                        customer_price: $('#customer_price').val(),
+                        mrp: $('#mrp').val(),
+                        vendor: $('#vendor').val(),
+                        company_price: $('#company_price').val()
                     },
                     success: function (response) {
                         console.log(response)
@@ -80,4 +134,72 @@ block script
                     }
                 });
             });
+
         });
+
+        function edit_item(itemid) {
+            $.ajax({
+                url: "/admin/items/get?itemid="+itemid,
+                type: "GET",
+                success: function (response) {
+                    console.log(response.data)
+                    $('#edt_name').val(response.data.name)
+                    $('#edt_category option[value='+response.data.category+']').attr('selected', 'selected')
+                    $('#edt_vendor').val(response.data.vendor)
+                    $('#edt_b2p_price').val(response.data.dealer_price)
+                    $('#edt_customer_price').val(response.data.customer_price)
+                    $('#edt_mrp').val(response.data.mrp)
+                    $('#edt_company_price').val(response.data.company_price)
+                    $('#edt_edit_item').click(function(event){
+                        edit_item_post(itemid)
+                    })
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+        function edit_item_post(itemid){
+            $.ajax({
+                url: "/admin/items/edit",
+                type: "POST",
+                data: {
+                    itemid: itemid,
+                    name: $('#edt_name').val(),
+                    category: $('#edt_category').val(),
+                    b2p_price: $('#edt_b2p_price').val(),
+                    customer_price: $('#edt_customer_price').val(),
+                    mrp: $('#edt_mrp').val(),
+                    vendor: $('#edt_vendor').val(),
+                    company_price: $('#edt_company_price').val()
+                },
+                success: function (response) {
+                    console.log(response)
+                    oTable.ajax.reload();
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+        function delete_item(itemid) {
+            if (confirm('Are you sure you want to delete this item ?')) {
+                $.ajax({
+                    url: "/admin/items/delete?itemid=" + itemid,
+                    type: "GET",
+                    success: function (response) {
+                        console.log(response);
+                        if (response) {
+                            oTable.ajax.reload();
+                            alert("Deleted")
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            } else {
+            }
+        }

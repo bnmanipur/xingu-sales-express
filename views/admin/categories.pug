@@ -1,0 +1,123 @@
+extends layout
+
+block content
+    h4 Categories
+    .content-panel(style='padding:10px')
+        .row
+            .col-md-4
+                .form-group
+                    span Name*
+                    input#name.form-control(name='name' type='text' placeholder='Name')
+                .form-group
+                    button#add_category.btn.btn-success(type='button') Add
+            .col-md-8
+                .adv-table
+                    table#example.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                        thead
+                            tr
+                                th Name
+                                th Actions
+            span  
+    #categoryEditModel.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Edit Category
+                form
+                    .form-group
+                        span Name*
+                        input#edt_name.form-control(name='name' type='text' placeholder='Name')
+                    .form-group
+                        button#edt_edit_item.btn.btn-success(type='button') Add
+block script
+    script(type='text/javascript').
+        var oTable;
+        $(document).ready(function () {
+            oTable = $('#example').DataTable({
+                "ajax": "/admin/master/categories/get_list",
+                "columns": [
+                    {"data": "name"},
+                    {
+                        "data": null,
+                        "sortable" : false,
+                        "render" : function (data, type, row){
+                            return `<a href="#" class="fa fa-pencil" onClick="edit_category('`+row.id+`')" data-toggle="modal" data-target="#categoryEditModel"></a> | <a href="#" class="fa fa-trash" onClick="delete_category('`+row.id+`'+)"></a>`
+                        }
+                    },
+                ],
+            });
+            $('#add_user').click(function (event) {
+                $.ajax({
+                    url: "/admin/master/categories/add",
+                    type: "POST",
+                    data: {
+                        name : $('#name').val(),
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        oTable.ajax.reload();
+                    },
+                    error: function (response) {
+                        console.log(response)
+                    }
+                });
+            });
+
+        });
+
+        function edit_category(categoryid) {
+            $.ajax({
+                url: "/admin/master/categories/get?categoryid="+categoryid,
+                type: "GET",
+                success: function (response) {
+                    console.log(response.data)
+                    $('#edt_name').val(response.data.name)
+                    $('#edt_edit_category').click(function(event){
+                        edit_category_post(categoryid)
+                    })
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+        function edit_category_post(categoryid){
+            $.ajax({
+                url: "/admin/master/categories/edit",
+                type: "POST",
+                data: {
+                    categoryid: categoryid,
+                    name: $('#edt_name').val(),
+                },
+                success: function (response) {
+                    console.log(response)
+                    oTable.ajax.reload();
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+        function delete_category(categoryid) {
+            if (confirm('Are you sure you want to delete this category ?')) {
+                $.ajax({
+                    url: "/admin/master/categories/delete?categoryid=" + categoryid,
+                    type: "GET",
+                    success: function (response) {
+                        console.log(response);
+                        if (response) {
+                            oTable.ajax.reload();
+                            alert("Deleted")
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            } else {
+            }
+        }

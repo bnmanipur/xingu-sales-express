@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const usersRouter = require('../../controllers/admin/users')
-
-router.get('/users', usersRouter.index)
-router.get('/users/get_list', usersRouter.get_list)
+const usersRouter = require('./master/users')
+const masterRouter = require('./master/categories')
 
 
-router.post('/users/add', usersRouter.add)
+router.use('/users', usersRouter)
+router.use('/categories', masterRouter)
 
 module.exports = router;

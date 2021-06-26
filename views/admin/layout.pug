@@ -115,6 +115,10 @@ html(lang='en')
                 i.fa.fa-envelope
                 span Quotation
             li
+              a(href='/admin/worklist' class=((title + "").toLowerCase() === "worklist" ? "active" : undefined))
+                i.fa.fa-list
+                span Worklist
+            li
               a(href='/admin/repairing' class=((title + "").toLowerCase() === "repairing" ? "active" : undefined))
                 i.fa.fa-bar-chart-o
                 span Repairing
@@ -149,4 +153,5 @@ html(lang='en')
     script.include(type='text/javascript' src="/lib/jquery.dcjqaccordion.2.7.js")
     script(src="/lib/jquery.scrollTo.min.js")
     script(src="/lib/common-scripts.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js")
     block script

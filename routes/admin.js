@@ -6,6 +6,7 @@ const masterRoute = require('./admin/master')
 const ordersRoute = require('./admin/orders')
 const quotationRoute = require('./admin/quotation')
 const repairingRoute = require('./admin/repairing')
+const worklistRoute = require('./admin/worklist')
 
 const adminController = require('../controllers/admin')
 
@@ -24,5 +25,6 @@ router.use('/master', masterRoute)
 router.use('/orders', ordersRoute)
 router.use('/quotation', quotationRoute)
 router.use('/repairing', repairingRoute)
+router.use('/worklist', worklistRoute)
 
 module.exports = router;

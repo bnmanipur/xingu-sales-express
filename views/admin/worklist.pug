@@ -80,7 +80,6 @@ block content
                     h4.modal-title New Order
                 .modal-body
                     form#ordercreatemodel
-                        input#add_token(type='hidden' name='_token' value='{{ csrf_token() }}')
                         .form-group.col-md-6
                             span Date*
                             input#date.form-control(name='date' type='date' value="{{date('Y-m-d')}}" placeholder='Date')
@@ -126,7 +125,7 @@ block content
                         span(aria-hidden='true') ×
                     h4.modal-title Assign/Edit Order
                 form#orderEditForm
-                    input#edit_token(type='hidden' name='_token' value='{{ csrf_token() }}')
+                    input#edit_id(type='hidden' value='')
                     .modal-body(style='display: grid')
                         .form-group.col-md-6
                             span Work ID
@@ -206,4 +205,332 @@ block content
                     tbody
 
 block script
-    
+
+    script(type='text/javascript').
+        var tttt;
+        $(document).ready(function () {
+            $('#add_order_btn').click(function (event) {
+                let date = $("input[id=date]").val();
+                let client_name = $("input[id=client_name]").val();
+                let work_date = $("input[id=work_date]").val();
+                let address = $("input[id=address]").val();
+                let contact = $("input[id=contact]").val();
+                let work = $("#work").val();
+                let refer_by = $("input[id=refer_by]").val();
+                let payment_type = $('#payment_type').val();
+                let emergency = ($('#emergency').is(':checked')) ? 1 : 0;
+                if (!(client_name.length > 0)) {
+                    return alert("Client Name Required.");
+                }
+                if (!(contact.length > 0)) {
+                    return alert("Contact Required.");
+                }
+                $.ajax({
+                    url: "/admin/worklist/insert",
+                    type: "POST",
+                    data: {
+                        date: date,
+                        client_name: client_name,
+                        work_date: work_date,
+                        contact: contact,
+                        address: address,
+                        work: work,
+                        refer_by: refer_by,
+                        payment_type: payment_type,
+                        emergency: emergency,
+                    },
+                    success: function (response) {
+                        if (response.success != undefined) {
+                            $('.success').text(response.success);
+                            $("#ordercreatemodel")[0].reset();
+                            $('#date').val("{{date('Y-m-d')}}")
+                            $('#work_date').val("{{date('Y-m-d')}}")
+                            tttt.ajax.reload();
+                            $('#orderModal').modal('hide');
+                        } else {
+                        }
+                    }
+                });
+            })
+        });
+        $(document).ready(function () {
+            $('#edit_job_btn').click(function (event) {
+                let id = $('#edit_id').val();
+                let workid = $('#edit_order_no').val();
+                let work = $('#edit_work').val();
+                let technicians = $('#edit_technicians').val();
+                let payment_type = $('#edit_payment_type').val();
+                let remarks = $('#edit_remarks').val();
+                let is_done = ($('#edit_done').is(':checked')) ? 1 : 0;
+                let emergency = ($('#edit_emergency').is(':checked')) ? 1 : 0;
+                let cancelled = ($('#edit_cancelled').is(':checked')) ? 1 : 0;
+                $.ajax({
+                    url: "/admin/worklist/update",
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        id: id,
+                        workid: workid,
+                        date: date,
+                        work_date: work_date,
+                        work: work,
+                        technicians: technicians,
+                        is_done: is_done,
+                        payment_type: payment_type,
+                        remarks: remarks,
+                        emergency: emergency,
+                        cancelled: cancelled,
+                    }),
+                    success: function (response) {
+                        if (response) {
+                            $('.success').text(response.success);
+                            tttt.ajax.reload();
+                        }
+                        $("#orderEditForm")[0].reset();
+                        console.log(response)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $("#orderEditForm")[0].reset();
+                    }
+                });
+            })
+        });
+        /* Formating function for row details */
+        function format(d) {
+            return '<table border="0" style="padding-left:50px;width:100%" class="a_table_that_needs_padding">' +
+                '<tbody>' +
+                '<tr>' +
+                '<td>Work : <span style="font-size:16px">' + d.work + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Technicians: <span style="font-size:16px">' + d.technicians + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                `<td><a class="btn btn-danger" onclick="edit_action('` + d.id + `')" data-toggle="modal" data-target="#orderEditModal" >Assign/Edit Order</a></td>` +
+                `<td><a class="btn btn-danger" onclick="delete_action('` + d.id + `')">Delete</a></td>` +
+                '</tr>' +
+                '</tbody>' +
+                '</table>';
+        }
+        function format2(d) {
+            return '<table border="0" style="padding-left:50px;width:100%" class="a_table_that_needs_padding">' +
+                '<tbody>' +
+                '<tr>' +
+                '<td>Work Date : <span style="font-size:16px">' + d.work_date + '</span></td>' +
+                '<td>Refer By : <span style="font-size:16px">' + d.refer_by + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Payment type : <span style="font-size:16px">' + ((d.payment_type != "Payment Type") ? d.payment_type : "") + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Work : <span style="font-size:16px">' + d.work + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Technicians: <span style="font-size:16px">' + d.technicians + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Remarks: <span style="font-size:16px">' + d.remarks + '</span></td>' +
+                '</tr>' +
+                '</tbody>' +
+                '</table>';
+        }
+        function edit_action(id) {
+            $("#orderEditForm")[0].reset();
+            $.ajax({
+                type: "GET",
+                url: "/admin/worklist/get_data?id=" + id,
+                success: function (data) {
+                    $('#edit_id').val(data.data.id);
+                    $('#edit_order_no').val(data.data.workid);
+                    $('#edit_date').val(data.data.date);
+                    $('#edit_work_date').val(data.data.work_date);
+                    $('#edit_refer_by').val(data.data.refer_by);
+                    $('#edit_client_name').val(data.data.name);
+                    $('#edit_contact').val(data.data.contact);
+                    $('#edit_address').val(data.data.address);
+                    $('#edit_work').val(data.data.work);
+                    $('#edit_technicians').val(data.data.technicians);
+                    $('#edit_payment_type').val(data.data.payment_type);
+                    $('#edit_remarks').val(data.data.remarks);
+                    if (data.data.is_done == 1) {
+                        $('#edit_done').attr("checked", true);
+                    } else {
+                        $("#edit_done").removeAttr("checked");
+                    }
+                    if (data.data.is_emergency == 1) {
+                        $('#edit_emergency').attr("checked", true);
+                    } else {
+                        $("#edit_emergency").removeAttr("checked");
+                    }
+                }
+            });
+        }
+        function delete_action(id) {
+            if (confirm('Are you sure you want to delete the selected work ?')) {
+                $.ajax({
+                    url: "/admin/worklist/delete_order?id=" + id,
+                    type: "GET",
+                    success: function (response) {
+                        console.log(response);
+                        if (response) {
+                            tttt.ajax.reload();
+                            tttt1.ajax.reload();
+                            alert("Deleted")
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            } else {
+            }
+        }
+        $(document).ready(function () {
+            /*
+            * Insert a 'details' column to the table
+            */
+            var nCloneTh = document.createElement('th');
+            var nCloneTd = document.createElement('td');
+            /*
+            * Initialse DataTables, with no sorting on the 'details' column
+            */
+            var oTable = $('#example').DataTable({
+                "pageLength": 50,
+                "ajax": "/admin/worklist/get_list",
+                "columns": [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    {"data": "workid"},
+                    {"data": "date"},
+                    {"data": "work_date"},
+                    {"data": "name"},
+                    {"data": "contact"},
+                    {"data": "work"},
+                    {"data": "address"},
+                    {"data": "technicians"},
+                    {"data": "payment_type"},
+                ],
+                "columnDefs": [
+                    {
+                        targets: 2, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                    {
+                        targets: 3, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                    {
+                        targets: 9, render: function (data) {
+                            return ((data != "Payment Type") ? data : "")
+                        }
+                    }
+                ],
+                "createdRow": function (row, data, dataIndex) {
+                    if (data.technicians == null || data.technicians.length <= 0) {
+                    } else {
+                        $(row).addClass("green")
+                    }
+                },
+                'rowCallback': function (row, data, index) {
+                    if (data.is_emergency == 1) {
+                        $(row).find('td:eq(1)').css('color', 'red');
+                        $(row).find('td:eq(2)').css('color', 'red');
+                        $(row).find('td:eq(3)').css('color', 'red');
+                        $(row).find('td:eq(4)').css('color', 'red');
+                        $(row).find('td:eq(5)').css('color', 'red');
+                        $(row).find('td:eq(6)').css('color', 'red');
+                        $(row).find('td:eq(7)').css('color', 'red');
+                        $(row).find('td:eq(8)').css('color', 'red');
+                        $(row).find('td:eq(9)').css('color', 'red');
+                    }
+                }
+            });
+            tttt = oTable;
+            /* Add event listener for opening and closing details
+            * Note that the indicator for showing which row is open is not controlled by DataTables,
+            * rather it is done here
+            */
+            $('#example tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = oTable.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    oTable.rows().eq(0).each(function (index) {
+                        var _row = oTable.row(index);
+                        _row.child.hide();
+                        $('.shown').removeClass('shown')
+                    });
+                    // Open this row
+                    row.child(format(row.data())).show();
+                    tr.addClass('shown');
+                }
+            });
+            var oTable1 = $('#example2').DataTable({
+                "ajax": "/admin/worklist/get_list2",
+                "columns": [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    {"data": "workid"},
+                    {"data": "date"},
+                    {"data": "work_date"},
+                    {"data": "name"},
+                    {"data": "contact"},
+                    {"data": "work"},
+                    {"data": "address"},
+                    {"data": "technicians"},
+                    {"data": "payment_type"},
+                ],
+                "columnDefs": [
+                    {
+                        targets: 2, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                    {
+                        targets: 3, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    }
+                ],
+            });
+            tttt1 = oTable1;
+            /* Add event listener for opening and closing details
+            * Note that the indicator for showing which row is open is not controlled by DataTables,
+            * rather it is done here
+            */
+            $('#example2 tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = oTable1.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    oTable1.rows().eq(0).each(function (index) {
+                        var _row = oTable1.row(index);
+                        _row.child.hide();
+                        $('.shown').removeClass('shown')
+                    });
+                    // Open this row
+                    row.child(format2(row.data())).show();
+                    tr.addClass('shown');
+                }
+            });
+        });
+
+

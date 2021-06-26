@@ -43,11 +43,11 @@ block content
                             tr
                                 th Name
                                 th Category
-                                th Vendor
                                 th B2B Price
                                 th Customer Price
                                 th MRP
                                 th Company Price
+                                th Vendor
                                 th Actions
             span  
     #itemEditModel.modal.fade(tabindex='-1' role='dialog')
@@ -98,9 +98,9 @@ block script
                 "columns": [
                     {"data": "name"},
                     {"data": "category"},
-                    {"data": "vendor"},
                     {"data": "dealer_price"},
                     {"data": "customer_price"},
+                    {"data": "vendor"},
                     {"data": "mrp"},
                     {"data": "company_price"},
                     {

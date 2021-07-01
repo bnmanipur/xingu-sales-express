@@ -82,10 +82,10 @@ block content
                     form#ordercreatemodel
                         .form-group.col-md-6
                             span Date*
-                            input#date.form-control(name='date' type='date' value="{{date('Y-m-d')}}" placeholder='Date')
+                            input#date.form-control(name='date' type='date' value=moment().format('yyyy-MM-DD') placeholder='Date')
                         .form-group.col-md-6
                             span Work Date*
-                            input#work_date.form-control(name='work_date' type='date' value="{{date('Y-m-d')}}" placeholder='Date')
+                            input#work_date.form-control(name='work_date' type='date' value=moment().format('yyyy-MM-DD') placeholder='Date')
                         .form-group.col-md-12
                             span Client Name*
                             input#client_name.form-control(name='client_name' placeholder='Customer Name')
@@ -135,7 +135,7 @@ block content
                             input#edit_date.form-control(name='date' type='date' disabled='' placeholder='Date')
                         .form-group.col-md-6
                             span Work Date*
-                            input#edit_work_date.form-control(name='work_date' type='date' disabled='' value="{{date('Y-m-d')}}" placeholder='Date')
+                            input#edit_work_date.form-control(name='work_date' type='date' disabled='' value=moment().format('yyyy-MM-DD') placeholder='Date')
                         .form-group.col-md-6
                             span Refer By
                             input#edit_refer_by.form-control(name='refer_by' disabled='' placeholder='Refer By')

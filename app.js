@@ -17,7 +17,17 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({secret: "xingusales"}));
+app.use(session({
+      secret: "xingusales",
+      resave: true,
+      saveUninitialized: true,
+      rolling: true,
+      cookie: {
+        httpOnly: true,
+        maxAge: 60*60*1000
+      }
+    })
+);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.locals.moment = require('moment');

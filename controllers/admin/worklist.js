@@ -104,10 +104,10 @@ exports.insert = async(req, res, next) => {
         emergency
     } = req.body
 
-    let _ = await db.collection("worklist").orderBy("worklid", "desc").limit(1).get()
+    let _ = await db.collection("worklist").orderBy("workid", "desc").limit(1).get()
     let workid = _.docs[0].data().workid.toString()
 
-    await db.collection("worklist").doc().set({
+    const a = await db.collection("worklist").doc().set({
         workid : parseInt(workid) + 1,
         date : date,
         work_date : work_date,
@@ -118,7 +118,13 @@ exports.insert = async(req, res, next) => {
         refer_by : refer_by,
         payment_type : payment_type,
         emergency : emergency,
+        technicians : "",
+        remarks : "",
+        is_done : 0,
+        cancelled : 0
     })
+
+    console.log(a.toString())
 
     res.send({"success" : "Aye! Aye! Order added successfully!"})
 }

@@ -16,7 +16,7 @@ exports.login = async (req, res, next) => {
         res.send({"status":"success", "data" :"wrong"})
     }
 }
-
+ 
 exports.get_list = async (req, res, next) => {
     const users = (await db.collection('users').get()).docs
     let data = []

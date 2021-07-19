@@ -1,0 +1,48 @@
+extends layout
+
+block content
+    h4 Notification
+    br
+    .content-panel(style='padding:10px')
+        .row
+            .col-md-4
+                .form-group
+                    span Title*
+                    input#title.form-control(name='title' type='text' placeholder='Title')
+                .form-group
+                    span Body*
+                    input#body.form-control(name='title' type='text' placeholder='Body')
+                .form-group
+                    span Image*
+                    input#image.form-control(name='title' type='file' placeholder='Image')
+                .form-group
+                    button#send_notification.btn.btn-success(type='button') Send
+            .col-md-8
+                .adv-table
+                    table#example.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                        thead
+                            tr
+                                th Title
+                                th Body
+                                th Image
+                                th Sent On
+            span  
+block script
+    script(type='text/javascript').
+        $("#send_notification").click(function(event){
+            $.ajax({
+                url: "/admin/notification/send",
+                type: "POST",
+                data: {
+                    title: $('#title').val(),
+                    body: $('#body').val(),
+                    image: $('#image').val(),
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        })

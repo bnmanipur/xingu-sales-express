@@ -7,6 +7,7 @@ const ordersRoute = require('./admin/orders')
 const quotationRoute = require('./admin/quotation')
 const repairingRoute = require('./admin/repairing')
 const worklistRoute = require('./admin/worklist')
+const notificationRoute = require('./admin/notification')
 
 const adminController = require('../controllers/admin')
 
@@ -26,5 +27,6 @@ router.use('/orders', ordersRoute)
 router.use('/quotation', quotationRoute)
 router.use('/repairing', repairingRoute)
 router.use('/worklist', worklistRoute)
+router.use('/notification', notificationRoute)
 
 module.exports = router;

@@ -48,6 +48,7 @@ block content
                                 th MRP
                                 th Company Price
                                 th Vendor
+                                th Added On
                                 th Actions
             span  
     #itemEditModel.modal.fade(tabindex='-1' role='dialog')
@@ -104,15 +105,20 @@ block script
                     {"data": "mrp"},
                     {"data": "company_price"},
                     {
+                        "data": "addedon",
+                        "visible": false,
+                    },
+                    {
                         "data": null,
                         "sortable" : false,
                         "render" : function (data, type, row){
-                            return `<a href="#" class="fa fa-pencil" onClick="edit_item('`+row.id+`')" data-toggle="modal" data-target="#itemEditModel"></a> | <a href="#" class="fa fa-trash" onClick="delete_item('`+row.id+`'+)"></a>`
+                            return `<a href="#" class="fa fa-pencil" onClick="edit_item('`+row.id+`')" data-toggle="modal" data-target="#itemEditModel"></a> | <a href="#" class="fa fa-trash" onClick="delete_item('`+row.id+`')"></a>`
                         }
                     },
                 ],
+                "order" : [[7, "asc"]]
             });
-            $('#add_user').click(function (event) {
+            $('#add_item').click(function (event) {
                 $.ajax({
                     url: "/admin/items/add",
                     type: "POST",

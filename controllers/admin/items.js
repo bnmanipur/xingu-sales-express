@@ -41,6 +41,7 @@ exports.get_list = async (req, res, next) => {
             mrp : item.data().mrp + "",
             vendor : item.data().vendor || "",
             category : categories[item.data().category].name || "",
+            addedon : item.data().addedon,
             actions : ""
         })
     })
@@ -62,6 +63,7 @@ exports.get = async (req, res, next) => {
         mrp : item.data().mrp + "",
         vendor : item.data().vendor || "",
         category : item.data().category || "",
+        addedon : item.data().addedon,
         actions : ""
     }
 

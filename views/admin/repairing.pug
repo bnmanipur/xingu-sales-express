@@ -153,7 +153,7 @@ block script
         function calculate_edit_delivery_payment() {
             let advanced_payment = $("input[id=edit_advanced_payment]").val()
             let total_amount = $("input[id=edit_total_payment]").val()
-            $("input[id=edit_delivery_payment]")x.val(parseInt(total_amount) - parseInt(advanced_payment))
+            $("input[id=edit_delivery_payment]").val(parseInt(total_amount) - parseInt(advanced_payment))
         }
         function check_credit() {
             let delivered = ($('#edit_delivered').is(':checked')) ? 1 : 0;

@@ -8,6 +8,7 @@ router.get("/get", itemsRouter.get)
 router.get("/get_list", itemsRouter.get_list)
 
 router.post("/add", itemsRouter.add)
+router.post("/edit", itemsRouter.edit)
 router.get("/delete", itemsRouter.delete)
 
 module.exports = router;

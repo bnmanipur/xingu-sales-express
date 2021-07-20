@@ -89,7 +89,7 @@ block content
                                 span Company Price
                                 input#edt_company_price.form-control(name='company_price' type='text' placeholder='Company Price')
                     .form-group
-                        button#edt_edit_item.btn.btn-success(type='button') Add
+                        button#edt_edit_item.btn.btn-success(type='button') Update
 block script
     script(type='text/javascript').
         var oTable;
@@ -182,7 +182,9 @@ block script
                 },
                 success: function (response) {
                     console.log(response)
+                    alert("Updated")
                     oTable.ajax.reload();
+                    $('#itemEditModel').modal('hide');
                 },
                 error: function (response) {
                     console.log(response)

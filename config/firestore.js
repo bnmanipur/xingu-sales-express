@@ -1,2 +1,3 @@
-var admin = require("./admin");
-module.exports = admin.firestore();
+const admin = require("./admin");
+const store = admin.firestore();
+module.exports = store

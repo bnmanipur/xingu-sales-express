@@ -13,9 +13,6 @@ block content
                     span Body*
                     input#body.form-control(name='title' type='text' placeholder='Body')
                 .form-group
-                    span Image*
-                    input#image.form-control(name='title' type='file' placeholder='Image')
-                .form-group
                     button#send_notification.btn.btn-success(type='button') Send
             .col-md-8
                 .adv-table
@@ -24,7 +21,6 @@ block content
                             tr
                                 th Title
                                 th Body
-                                th Image
                                 th Sent On
             span  
 block script
@@ -36,7 +32,6 @@ block script
                 data: {
                     title: $('#title').val(),
                     body: $('#body').val(),
-                    image: $('#image').val(),
                 },
                 success: function (response) {
                     console.log(response)

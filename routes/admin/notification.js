@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
 
 const notificationController = require('../../controllers/admin/notification')
 

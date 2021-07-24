@@ -1,3 +1,4 @@
-var admin = require("./admin");
+const admin = require("./admin");
+const storage = admin.storage()
 
-module.exports = admin.storage().bucket();
+module.exports = storage

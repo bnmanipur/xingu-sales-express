@@ -4,7 +4,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
-const fileUpload = require('express-fileupload')
 
 const indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin')
@@ -29,10 +28,6 @@ app.use(session({
       }
     })
 );
-
-app.use(fileUpload({
-    createParentPath: true
-}))
 
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 
 const indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin')
@@ -17,17 +17,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({
+app.use(cookieSession({
       secret: "xingusales",
-      resave: true,
-      saveUninitialized: true,
-      rolling: true,
-      cookie: {
-        httpOnly: true,
-        maxAge: 60*60*1000
-      }
-    })
-);
+      maxAge: 60*60*1000
+}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

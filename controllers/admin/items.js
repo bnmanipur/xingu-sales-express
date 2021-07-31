@@ -32,6 +32,18 @@ exports.get_list = async (req, res, next) => {
     let data = []
 
     items.forEach(item => {
+
+        let category = item.data().category;
+        if(category == null){
+            category = ""
+        }else{
+            try{
+                category = categories[category].name
+            }catch(ex){
+                console.log(category)
+            }
+        }
+
         data.push({
             id : item.id + "",
             name : item.data().name +"",
@@ -40,7 +52,7 @@ exports.get_list = async (req, res, next) => {
             customer_price : item.data().customer_price || "",
             mrp : item.data().mrp + "",
             vendor : item.data().vendor || "",
-            category : categories[item.data().category].name || "",
+            category : category,
             addedon : item.data().addedon,
             actions : ""
         })

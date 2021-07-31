@@ -1,0 +1,520 @@
+extends layout
+
+block content
+    h4 Courier
+    style.
+        .dataTables_wrapper {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+            border: 2px solid #ddd;
+        }
+    br
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#courierModal') Add new courier
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#incoming') Incoming
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#outgoing') Outgoing
+
+    #incoming.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Incoming
+                .modal-body(style='display: grid')
+                    .row.mb(style='margin-top: 20px')
+                        // page start
+                        .content-panel(style='padding:10px')
+                            .adv-table
+                                table#example2.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                                    thead
+                                        tr
+                                            th
+                                            th Date
+                                            th Courier Name
+                                            th No of Boxes
+                                            th Tracking ID
+                                            th Payable Amount
+                                    tbody
+    #outgoing.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Outgoing
+                .modal-body(style='display: grid')
+                    .row.mb(style='margin-top: 20px')
+                        // page start
+                        .content-panel(style='padding:10px')
+                            .adv-table
+                                table#example3.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                                    thead
+                                        tr
+                                            th
+                                            th Date
+                                            th Courier Name
+                                            th No of Boxes
+                                            th Tracking ID
+                                            th Payable Amount
+                                    tbody
+    #courierModal.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content(style='display: inline-block;')
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title New Courier
+                .modal-body
+                    form#ordercreatemodel
+                        .form-group.col-md-6
+                            span Date*
+                            input#date.form-control(name='date' type='date' value=moment().format('yyyy-MM-DD') placeholder='Date')
+                        .form-group.col-md-12
+                            span Courier Name*
+                            input#courier_name.form-control(name='courier_name' placeholder='Courier Name')
+                        .form-group.col-md-12
+                            span No of boxes*
+                            input#boxno.form-control(name='boxno' placeholder='No of Boxes')
+                        .form-group.col-md-12
+                            span Tracking ID
+                            input#tracking_id.form-control(name='tracking_id' placeholder='Tracking ID')
+                        .form-group.col-md-6
+                            span Payable Amount
+                            input#payable_amt.form-control(name='payable_amt')
+                        .form-group.col-md-6
+                            span Party Name
+                            input#party_name.form-control(name='party_name' placeholder='Party Name')
+                        .form-group.col-md-12
+                            span Party Address
+                            input#party_add.form-control(name='party_add' placeholder='Party Address')
+                        .form-group.col-md-6
+                            span Received Date*
+                            input#received_date.form-control(name='received_date' type='date' value=moment().format('yyyy-MM-DD') placeholder='Date')
+                        .form-group.col-md-6
+                            span Type
+                            select#type.form-control
+                                option(selected='' hidden='') Type
+                                option(value='air') Air
+                                option(value='land') Land
+                        .form-group.col-md-4
+                            | Is Received
+                            br
+                            label.switch
+                                input#is_received(type='checkbox' name='done')
+                                span.slider.round
+                        .form-group.col-md-4
+                            | Is Incoming
+                            br
+                            label.switch
+                                input#is_incoming(type='checkbox' name='done')
+                                span.slider.round
+                        .form-group.col-md-4
+                            | Is Outgoing
+                            br
+                            label.switch
+                                input#is_outgoing(type='checkbox' name='done')
+                                span.slider.round
+                        .form-group.col-md-12
+                            button.btn.btn-default(type='button' data-dismiss='modal') Close
+                            button#add_order_btn.btn.btn-success(type='button') Save
+    #courierEditModal.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Edit Courier
+                form#courierEditForm
+                    input#edit_id(type='hidden' value='')
+                    .modal-body(style='display: grid')
+                        .form-group.col-md-6
+                            span Date
+                            input#edit_date.form-control(name='date' type='date' disabled='' placeholder='Date')
+                        .form-group.col-md-6
+                            span Received Date*
+                            input#edit_received_date.form-control(name='received_date' type='date' value=moment().format('yyyy-MM-DD') placeholder='Received Date')
+                        .form-group.col-md-6
+                            span No of box
+                            input#edit_boxno.form-control(name='boxno' placeholder='No of box')
+                        .form-group.col-md-6
+                            span Tracking ID
+                            input#edit_tracking_id.form-control(name='tracking_id' placeholder='Tracking ID')
+                        .form-group.col-md-12
+                            span Courier Name
+                            input#edit_courier_name.form-control(name='courier_name' placeholder='Courier Name')
+                        .form-group.col-md-6
+                            span Type
+                            select#edit_type.form-control
+                                option(selected='' hidden='') Type
+                                option(value='air') Air
+                                option(value='land') Land
+                        .form-group.col-md-12
+                            span Party Name
+                            input#edit_party_name.form-control(name='party_name' placeholder='Party Name')
+                        .form-group.col-md-12
+                            span Party Address*
+                            input#edit_party_add.form-control(name='party_add' placeholder='Party Address')
+                        .form-group.col-md-12
+                            span Payable Amount
+                            input#edit_payable_amt.form-control(name='payable_amt' placeholder='Payable Amount')
+                        .form-group.col-md-4
+                            | Is Received
+                            br
+                            label.switch
+                                input#edit_is_received(type='checkbox' name='is_received')
+                                span.slider.round
+                        .form-group.col-md-4
+                            | Is Incoming
+                            br
+                            label.switch
+                                input#edit_is_incoming(type='checkbox' name='is_incoming')
+                                span.slider.round
+                        .form-group.col-md-4
+                            | Is Outgoing
+                            br
+                            label.switch
+                                input#edit_is_outgoing(type='checkbox' name='is_outgoing')
+                                span.slider.round
+                        .form-group.col-md-12
+                            button.btn.btn-default(type='button' data-dismiss='modal') Close
+                            button#edit_courier_btn.btn.btn-success(type='button' data-dismiss='modal') Confirm
+    .row.mb(style='margin-top: 20px')
+        // page start
+        .content-panel(style='padding:10px')
+            .adv-table
+                table#example.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                    thead
+                        tr(style='background-color: #ddd')
+                            th
+                            th Date
+                            th Courier Name
+                            th No. of boxes
+                            th Tracking ID
+                            th Payable Amount
+                    tbody
+block script
+    script(type='text/javascript').
+        var tttt;
+        $(document).ready(function () {
+            $('#add_order_btn').click(function (event) {
+                let date = $("input[id=date]").val();
+                let courier_name = $("input[id=courier_name]").val();
+                let boxno = $("input[id=boxno]").val();
+                let tracking_id = $("input[id=tracking_id]").val();
+                let payable_amt = $("input[id=payable_amt]").val();
+                let party_name = $("input[id=party_name]").val();
+                let party_add = $("input[id=party_add]").val();
+                let received_date = $("input[id=received_date]").val();
+                let type = $('#type').val();
+                let is_received = ($('#is_received').is(':checked')) ? 1 : 0;
+                let is_incoming = ($('#is_incoming').is(':checked')) ? 1 : 0;
+                let is_outgoing = ($('#is_outgoing').is(':checked')) ? 1 : 0;
+
+                $.ajax({
+                    url: "/admin/courier/insert",
+                    type: "POST",
+                    data: {
+                        date: date,
+                        courier_name: courier_name,
+                        boxno: boxno,
+                        tracking_id: tracking_id,
+                        payable_amt: payable_amt,
+                        party_name: party_name,
+                        party_add: party_add,
+                        received_date: received_date,
+                        type: type,
+                        is_received: is_received,
+                        is_incoming: is_incoming,
+                        is_outgoing: is_outgoing,
+                    },
+                    success: function (response) {
+                        if (response.success != undefined) {
+                            $('.success').text(response.success);
+                            $("#ordercreatemodel")[0].reset();
+                            $('#date').val("{{date('Y-m-d')}}")
+                            $('#received_date').val("{{date('Y-m-d')}}")
+                            tttt.ajax.reload();
+                            $('#courierModal').modal('hide');
+                        } else {
+                        }
+                    }
+                });
+            })
+        });
+        $(document).ready(function () {
+            $('#edit_job_btn').click(function (event) {
+                let id = $('#edit_id').val();
+                let date = $("input[id=edit_date]").val();
+                let courier_name = $("input[id=edit_courier_name]").val();
+                let boxno = $("input[id=edit_boxno]").val();
+                let tracking_id = $("input[id=edit_tracking_id]").val();
+                let payable_amt = $("input[id=edit_payable_amt]").val();
+                let party_name = $("input[id=edit_party_name]").val();
+                let party_add = $("input[id=edit_party_add]").val();
+                let received_date = $("input[id=edit_received_date]").val();
+                let type = $('#edit_type').val();
+                let is_received = ($('#edit_is_received').is(':checked')) ? 1 : 0;
+                let is_incoming = ($('#edit_is_incoming').is(':checked')) ? 1 : 0;
+                let is_outgoing = ($('#edit_is_outgoing').is(':checked')) ? 1 : 0;
+                $.ajax({
+                    url: "/admin/courier/update",
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        id: id,
+                        date: date,
+                        courier_name: courier_name,
+                        boxno: boxno,
+                        tracking_id: tracking_id,
+                        payable_amt: payable_amt,
+                        party_name: party_name,
+                        party_add: party_add,
+                        received_date: received_date,
+                        type: type,
+                        is_received: is_received,
+                        is_incoming: is_incoming,
+                        is_outgoing: is_outgoing,
+                    }),
+                    success: function (response) {
+                        if (response) {
+                            $('.success').text(response.success);
+                            tttt.ajax.reload();
+                        }
+                        $("#courierEditForm")[0].reset();
+                        console.log(response)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $("#courierEditForm")[0].reset();
+                    }
+                });
+            })
+        });
+        /* Formating function for row details */
+        function format(d) {
+            return '<table border="0" style="padding-left:50px;width:100%" class="a_table_that_needs_padding">' +
+                '<tbody>' +
+                '<tr>' +
+                '<td>Date of Received : <span style="font-size:16px">' + d.received_date + '</span></td>' +
+                '<td>Type : <span style="font-size:16px">' + d.type + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Party Name: <span style="font-size:16px">' + d.party_name + '</span></td>' +
+                '<td>Party Address: <span style="font-size:16px">' + d.party_add + '</span></td>' +
+                '</tr>' +
+                '<tr>' +
+                `<td><a class="btn btn-danger" onclick="edit_action('` + d.id + `')" data-toggle="modal" data-target="#courierEditModal" >Edit Courier</a></td>` +
+                `<td><a class="btn btn-danger" onclick="delete_action('` + d.id + `')">Delete</a></td>` +
+                '</tr>' +
+                '</tbody>' +
+                '</table>';
+        }
+        function edit_action(id) {
+            $("#orderEditForm")[0].reset();
+            $.ajax({
+                type: "GET",
+                url: "/admin/courier/get_data?id=" + id,
+                success: function (data) {
+                    $('#edit_id').val(data.data.id);
+                    $('#edit_date').val(data.data.date);
+                    $('#edit_courier_name').val(data.data.courier_name);
+                    $('#edit_boxno').val(data.data.boxno);
+                    $('#edit_tracking_id').val(data.data.tracking_id);
+                    $('#edit_payable_amt').val(data.data.payable_amt);
+                    $('#edit_party_name').val(data.data.party_name);
+                    $('#edit_party_add').val(data.data.party_add);
+                    $('#edit_received_date').val(data.data.received_date);
+                    $('#edit_type').val(data.data.type);
+                    if (data.data.is_received == 1) {
+                        $('#edit_is_received').attr("checked", true);
+                    } else {
+                        $("#edit_is_received").removeAttr("checked");
+                    }
+                    if (data.data.is_incoming == 1) {
+                        $('#edit_is_incoming').attr("checked", true);
+                    } else {
+                        $("#edit_is_incoming").removeAttr("checked");
+                    }
+                    if (data.data.is_outgoing == 1) {
+                        $('#edit_is_outgoing').attr("checked", true);
+                    } else {
+                        $("#edit_is_outgoing").removeAttr("checked");
+                    }
+                }
+            });
+        }
+        function delete_action(id) {
+            if (confirm('Are you sure you want to delete the selected courier ?')) {
+                $.ajax({
+                    url: "/admin/courier/delete?id=" + id,
+                    type: "GET",
+                    success: function (response) {
+                        console.log(response);
+                        if (response) {
+                            tttt.ajax.reload();
+                            tttt1.ajax.reload();
+                            alert("Deleted")
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            } else {
+            }
+        }
+        $(document).ready(function () {
+            /*
+            * Insert a 'details' column to the table
+            */
+            var nCloneTh = document.createElement('th');
+            var nCloneTd = document.createElement('td');
+            /*
+            * Initialse DataTables, with no sorting on the 'details' column
+            */
+            var oTable = $('#example').DataTable({
+                "pageLength": 50,
+                "ajax": "/admin/courier/get_list",
+                "columns": [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    {"data": "date"},
+                    {"data": "courier_name"},
+                    {"data": "boxno"},
+                    {"data": "tracking_id"},
+                    {"data": "payable_amt"},
+                ],
+                "columnDefs": [
+                    {
+                        targets: 1, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                ],
+            });
+            tttt = oTable;
+            /* Add event listener for opening and closing details
+            * Note that the indicator for showing which row is open is not controlled by DataTables,
+            * rather it is done here
+            */
+            $('#example tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = oTable.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    oTable.rows().eq(0).each(function (index) {
+                        var _row = oTable.row(index);
+                        _row.child.hide();
+                        $('.shown').removeClass('shown')
+                    });
+                    // Open this row
+                    row.child(format(row.data())).show();
+                    tr.addClass('shown');
+                }
+            });
+            var oTable1 = $('#example2').DataTable({
+                "ajax": "/admin/courier/get_list2",
+                "columns": [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    {"data": "date"},
+                    {"data": "courier_name"},
+                    {"data": "boxno"},
+                    {"data": "tracking_id"},
+                    {"data": "payable_amt"},
+                ],
+                "columnDefs": [
+                    {
+                        targets: 1, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                ],
+            });
+            tttt1 = oTable1;
+            /* Add event listener for opening and closing details
+            * Note that the indicator for showing which row is open is not controlled by DataTables,
+            * rather it is done here
+            */
+            $('#example2 tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = oTable1.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    oTable1.rows().eq(0).each(function (index) {
+                        var _row = oTable1.row(index);
+                        _row.child.hide();
+                        $('.shown').removeClass('shown')
+                    });
+                    // Open this row
+                    row.child(format(row.data())).show();
+                    tr.addClass('shown');
+                }
+            });
+            var oTable2 = $('#example3').DataTable({
+                "ajax": "/admin/courier/get_list3",
+                "columns": [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    {"data": "date"},
+                    {"data": "courier_name"},
+                    {"data": "boxno"},
+                    {"data": "tracking_id"},
+                    {"data": "payable_amt"},
+                ],
+                "columnDefs": [
+                    {
+                        targets: 1, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                ],
+            });
+            tttt2 = oTable2;
+            /* Add event listener for opening and closing details
+            * Note that the indicator for showing which row is open is not controlled by DataTables,
+            * rather it is done here
+            */
+            $('#example3 tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = oTable2.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    oTable2.rows().eq(0).each(function (index) {
+                        var _row = oTable2.row(index);
+                        _row.child.hide();
+                        $('.shown').removeClass('shown')
+                    });
+                    // Open this row
+                    row.child(format(row.data())).show();
+                    tr.addClass('shown');
+                }
+            });
+        });
+
+

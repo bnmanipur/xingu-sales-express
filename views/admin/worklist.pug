@@ -531,6 +531,61 @@ block script
                     tr.addClass('shown');
                 }
             });
+            var oTable2 = $('#example3').DataTable({
+                "ajax": "/admin/worklist/get_list3",
+                "columns": [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    {"data": "workid"},
+                    {"data": "date"},
+                    {"data": "work_date"},
+                    {"data": "name"},
+                    {"data": "contact"},
+                    {"data": "work"},
+                    {"data": "address"},
+                    {"data": "technicians"},
+                    {"data": "payment_type"},
+                ],
+                "columnDefs": [
+                    {
+                        targets: 2, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                    {
+                        targets: 3, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    }
+                ],
+            });
+            tttt2 = oTable2;
+            /* Add event listener for opening and closing details
+            * Note that the indicator for showing which row is open is not controlled by DataTables,
+            * rather it is done here
+            */
+            $('#example3 tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = oTable2.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    oTable2.rows().eq(0).each(function (index) {
+                        var _row = oTable2.row(index);
+                        _row.child.hide();
+                        $('.shown').removeClass('shown')
+                    });
+                    // Open this row
+                    row.child(format2(row.data())).show();
+                    tr.addClass('shown');
+                }
+            });
         });
 
 

@@ -16,7 +16,7 @@ exports.send = async (req, res, next) => {
     db.ref("notifications").set({
         title : title,
         body : body,
-        senton : senton
+        senton : Date.now()
     })
 
     const topic = 'global';
@@ -25,7 +25,7 @@ exports.send = async (req, res, next) => {
         data: {
             title: title,
             body: body,
-            from_web: true,
+            from_web: "true",
             sented : "_",
             user : "_"
         },

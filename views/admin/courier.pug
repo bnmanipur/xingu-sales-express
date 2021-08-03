@@ -314,7 +314,7 @@ block script
                 '</table>';
         }
         function edit_action(id) {
-            $("#orderEditForm")[0].reset();
+            $("#courierEditModal")[0].reset();
             $.ajax({
                 type: "GET",
                 url: "/admin/courier/get_data?id=" + id,

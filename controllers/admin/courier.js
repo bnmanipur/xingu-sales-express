@@ -128,6 +128,7 @@ exports.insert = async(req, res, next) => {
         is_received : is_received,
         is_incoming : is_incoming,
         is_outgoing : is_outgoing,
+        remarks : "",
         type : type
     })
 
@@ -149,12 +150,9 @@ exports.update = async (req, res, next) => {
         is_received,
         is_incoming,
         is_outgoing,
+        remarks,
         type
     } = req.body
-
-    is_received = is_received === true ? 1 : 0;
-    is_incoming = is_incoming === true ? 1 : 0;
-    is_outgoing = is_outgoing === true ? 1 : 0;
 
     await db.collection("courier").doc(id).update({
         date : date,
@@ -168,6 +166,7 @@ exports.update = async (req, res, next) => {
         is_received : is_received,
         is_incoming : is_incoming,
         is_outgoing : is_outgoing,
+        remarks : remarks,
         type : type
     })
 

@@ -160,6 +160,9 @@ block content
                         .form-group.col-md-12
                             span Payable Amount
                             input#edit_payable_amt.form-control(name='payable_amt' placeholder='Payable Amount')
+                        .form-group.col-md-12
+                            span Remarks
+                            input#edit_remarks.form-control(name='remarks' placeholder='Remarks')
                         .form-group.col-md-4
                             | Is Received
                             br
@@ -245,7 +248,7 @@ block script
             })
         });
         $(document).ready(function () {
-            $('#edit_job_btn').click(function (event) {
+            $('#edit_courier_btn').click(function (event) {
                 let id = $('#edit_id').val();
                 let date = $("input[id=edit_date]").val();
                 let courier_name = $("input[id=edit_courier_name]").val();
@@ -255,10 +258,12 @@ block script
                 let party_name = $("input[id=edit_party_name]").val();
                 let party_add = $("input[id=edit_party_add]").val();
                 let received_date = $("input[id=edit_received_date]").val();
+                let remarks = $("input[id=edit_remarks]").val();
                 let type = $('#edit_type').val();
                 let is_received = ($('#edit_is_received').is(':checked')) ? 1 : 0;
                 let is_incoming = ($('#edit_is_incoming').is(':checked')) ? 1 : 0;
                 let is_outgoing = ($('#edit_is_outgoing').is(':checked')) ? 1 : 0;
+                console.log(is_received + " " + is_incoming + " " + is_outgoing)
                 $.ajax({
                     url: "/admin/courier/update",
                     type: "POST",
@@ -278,17 +283,20 @@ block script
                         is_received: is_received,
                         is_incoming: is_incoming,
                         is_outgoing: is_outgoing,
+                        remarks : remarks,
                     }),
                     success: function (response) {
                         if (response) {
                             $('.success').text(response.success);
                             tttt.ajax.reload();
+                            tttt1.ajax.reload()
+                            tttt2.ajax.reload()
                         }
                         $("#courierEditForm")[0].reset();
                         console.log(response)
                     },
                     error: function (response) {
-                        console.log(response)
+                        console.log(response + " error")
                         $("#courierEditForm")[0].reset();
                     }
                 });
@@ -305,6 +313,10 @@ block script
                 '<tr>' +
                 '<td>Party Name: <span style="font-size:16px">' + d.party_name + '</span></td>' +
                 '<td>Party Address: <span style="font-size:16px">' + d.party_add + '</span></td>' +
+                '<td></td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td>Remarks: <span style="font-size:16px">' + d.remarks + '</span></td>' +
                 '</tr>' +
                 '<tr>' +
                 `<td><a class="btn btn-danger" onclick="edit_action('` + d.id + `')" data-toggle="modal" data-target="#courierEditModal" >Edit Courier</a></td>` +
@@ -314,7 +326,7 @@ block script
                 '</table>';
         }
         function edit_action(id) {
-            $("#courierEditModal")[0].reset();
+            $("#courierEditForm")[0].reset();
             $.ajax({
                 type: "GET",
                 url: "/admin/courier/get_data?id=" + id,
@@ -329,6 +341,7 @@ block script
                     $('#edit_party_add').val(data.data.party_add);
                     $('#edit_received_date').val(data.data.received_date);
                     $('#edit_type').val(data.data.type);
+                    $('#edit_remarks').val(data.data.remarks);
                     if (data.data.is_received == 1) {
                         $('#edit_is_received').attr("checked", true);
                     } else {

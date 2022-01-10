@@ -15,8 +15,11 @@ block content
         .table-bordered > tbody > tr > td, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > td, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
             border: 2px solid #ddd;
         }
-    br
-    button.btn.btn-success(type='button' data-toggle='modal' data-target='#orderModal') Add new order
+        button.btn.btn-success{
+            margin:2px;
+        }
+    br 
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#orderModal') Add new order 
     button.btn.btn-success(type='button' data-toggle='modal' data-target='#completed') Completed
     button.btn.btn-success(type='button' data-toggle='modal' data-target='#cancelled') Cancelled
     #completed.modal.fade(tabindex='-1' role='dialog')
@@ -360,7 +363,7 @@ block script
                     } else {
                         $("#edit_done").removeAttr("checked");
                     }
-                    if (data.data.is_emergency == 1) {
+                    if (data.data.emergency == 1) {
                         $('#edit_emergency').attr("checked", true);
                     } else {
                         $("#edit_emergency").removeAttr("checked");
@@ -444,7 +447,8 @@ block script
                     }
                 },
                 'rowCallback': function (row, data, index) {
-                    if (data.is_emergency == 1) {
+                    console.log(data)
+                    if (data.emergency == 1) {
                         $(row).find('td:eq(1)').css('color', 'red');
                         $(row).find('td:eq(2)').css('color', 'red');
                         $(row).find('td:eq(3)').css('color', 'red');

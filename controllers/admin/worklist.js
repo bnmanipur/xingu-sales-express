@@ -7,6 +7,20 @@ exports.index = (req, res, next) => {
 
 exports.get_list = async (req, res, next) => {
 
+    // const t1 = JSON.parse(fs.readFileSync("./controllers/admin/a/1.txt", "utf-8"));
+    // const t2 = JSON.parse(fs.readFileSync("./controllers/admin/a/2.txt", "utf-8"));
+    // const t3 = JSON.parse(fs.readFileSync("./a/3.txt", "utf-8"));
+
+    // t1.forEach(element => {
+    //     db.collection("worklist").doc(element.id).set({...element, paid: 0});
+    // });
+    // t2.forEach(element => {
+    //     db.collection("worklist").doc(element.id).set({...element, paid: 0});
+    // });
+    // t3.forEach(element => {
+    //     db.collection("worklist").doc(element.id).set({...element, paid: 0});
+    // });
+            
     const worklists = (await db.collection("worklist")
         .where("is_done", "==", 0)
         .where("cancelled", "==", 0)

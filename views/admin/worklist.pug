@@ -407,7 +407,6 @@ block script
                     $('#edit_technicians').val(data.data.technicians);
                     $('#edit_payment_type').val(data.data.payment_type);
                     $('#edit_remarks').val(data.data.remarks);
-                    $('#edit_paid').val(data.data.paid);
                     if (data.data.is_done == 1) {
                         $('#edit_done').attr("checked", true);
                     } else {
@@ -417,6 +416,11 @@ block script
                         $('#edit_emergency').attr("checked", true);
                     } else {
                         $("#edit_emergency").removeAttr("checked");
+                    }
+                    if (data.data.paid == 1) {
+                        $('#edit_paid').attr("checked", true);
+                    } else {
+                        $("#edit_paid").removeAttr("checked");
                     }
                 }
             });

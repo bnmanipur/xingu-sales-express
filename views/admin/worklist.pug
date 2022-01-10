@@ -545,7 +545,10 @@ block script
                         "data": null,
                         "defaultContent": ''
                     },
-                    {"data": "workid"},
+                    {
+                        "data": "workid",
+                        "orderable": true,
+                    },
                     {"data": "date"},
                     {"data": "work_date"},
                     {"data": "name"},
@@ -567,6 +570,7 @@ block script
                         }
                     }
                 ],
+                "order" : [[1, "desc"]]
             });
             tttt1 = oTable1;
             /* Add event listener for opening and closing details
@@ -600,7 +604,10 @@ block script
                         "data": null,
                         "defaultContent": ''
                     },
-                    {"data": "workid"},
+                    {
+                        "data": "workid",
+                        "orderable": true,
+                    },
                     {"data": "date"},
                     {"data": "work_date"},
                     {"data": "name"},
@@ -622,6 +629,7 @@ block script
                         }
                     }
                 ],
+                "order" : [[1, "desc"]]
             });
             tttt2 = oTable2;
             /* Add event listener for opening and closing details
@@ -655,7 +663,10 @@ block script
                         "data": null,
                         "defaultContent": ''
                     },
-                    {"data": "workid"},
+                    {
+                        "data": "workid",
+                        "orderable": true,
+                    },
                     {"data": "date"},
                     {"data": "work_date"},
                     {"data": "name"},
@@ -677,13 +688,14 @@ block script
                         }
                     }
                 ],
+                "order" : [[1, "desc"]]
             });
             tttt3 = oTable3;
             /* Add event listener for opening and closing details
             * Note that the indicator for showing which row is open is not controlled by DataTables,
             * rather it is done here
             */
-            $('#example3 tbody').on('click', 'td.details-control', function () {
+            $('#example4 tbody').on('click', 'td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = oTable3.row(tr);
                 if (row.child.isShown()) {

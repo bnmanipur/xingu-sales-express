@@ -1,10 +1,12 @@
 const db = require("../../config/firestore")
+var fs = require("fs");
 
 exports.index = (req, res, next) => {
     res.render("admin/worklist", {"title":"Worklist"})
 }
 
 exports.get_list = async (req, res, next) => {
+
     const worklists = (await db.collection("worklist")
         .where("is_done", "==", 0)
         .where("cancelled", "==", 0)
@@ -28,6 +30,7 @@ exports.get_list = async (req, res, next) => {
 exports.get_list2 = async (req, res, next) => {
     const worklists = (await db.collection("worklist")
         .where("is_done", "==", 1)
+        .where("paid", "==" , 0)
         .get()).docs
 
     let data = []
@@ -48,6 +51,27 @@ exports.get_list2 = async (req, res, next) => {
 exports.get_list3 = async (req, res, next) => {
     const worklists = (await db.collection("worklist")
         .where("cancelled", "==", 1)
+        .get()).docs
+
+    let data = []
+
+    worklists.forEach(worklist => {
+        data.push({
+            id : worklist.id,
+            ...worklist.data()
+        })
+    })
+
+    res.send({
+        "success" : true,
+        "data" : data
+    })
+}
+
+exports.get_list4 = async (req, res, next) => {
+    const worklists = (await db.collection("worklist")
+        .where("is_done", "==", 1)
+        .where("paid", "==" , 1)
         .get()).docs
 
     let data = []
@@ -121,7 +145,8 @@ exports.insert = async(req, res, next) => {
         technicians : "",
         remarks : "",
         is_done : 0,
-        cancelled : 0
+        cancelled : 0,
+        paid : 0
     })
 
     console.log(a.toString())
@@ -139,7 +164,8 @@ exports.update = async (req, res, next) => {
         payment_type,
         remarks,
         cancelled,
-        emergency
+        emergency,
+        paid
     } = req.body
 
     await db.collection("worklist").doc(id).update({
@@ -150,6 +176,7 @@ exports.update = async (req, res, next) => {
         payment_type : payment_type,
         cancelled : cancelled,
         emergency : emergency,
+        paid : paid
     })
 
     res.send({"success" : `Aye! Aye! Order added successfully!!`})

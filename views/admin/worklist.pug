@@ -18,10 +18,14 @@ block content
         button.btn.btn-success{
             margin:2px;
         }
+        .gone-reduced-to-atoms{
+            visibility:hidden;
+        }
     br 
     button.btn.btn-success(type='button' data-toggle='modal' data-target='#orderModal') Add new order 
     button.btn.btn-success(type='button' data-toggle='modal' data-target='#completed') Completed
     button.btn.btn-success(type='button' data-toggle='modal' data-target='#cancelled') Cancelled
+    button.btn.btn-success(type='button' data-toggle='modal' data-target='#paid') Paid
     #completed.modal.fade(tabindex='-1' role='dialog')
         .modal-dialog.modal-lg(role='document')
             .modal-content
@@ -61,6 +65,32 @@ block content
                         .content-panel(style='padding:10px')
                             .adv-table
                                 table#example3.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
+                                    thead
+                                        tr
+                                            th
+                                            th Order Id
+                                            th Date
+                                            th Work Date
+                                            th Client Name
+                                            th Contact
+                                            th Work
+                                            th Address
+                                            th Technicians
+                                            th Payment Type
+                                    tbody
+    #paid.modal.fade(tabindex='-1' role='dialog')
+        .modal-dialog.modal-lg(role='document')
+            .modal-content
+                .modal-header
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        span(aria-hidden='true') ×
+                    h4.modal-title Paid
+                .modal-body(style='display: grid')
+                    .row.mb(style='margin-top: 20px')
+                        // page start
+                        .content-panel(style='padding:10px')
+                            .adv-table
+                                table#example4.display.table.table-bordered(cellpadding='0' cellspacing='0' border='0' style='width: 100%')
                                     thead
                                         tr
                                             th
@@ -177,13 +207,19 @@ block content
                             | Emergency
                             br
                             label.switch
-                                input#edit_emergency(type='checkbox' name='done')
+                                input#edit_emergency(type='checkbox' name='emergency')
                                 span.slider.round
                         .form-group.col-md-4
                             | Cancelled
                             br
                             label.switch
-                                input#edit_cancelled(type='checkbox' name='done')
+                                input#edit_cancelled(type='checkbox' name='cancelled')
+                                span.slider.round
+                        .form-group.col-md-4#paid_form
+                            | Paid
+                            br
+                            label.switch
+                                input#edit_paid(type='checkbox' name='paid')
                                 span.slider.round
                         .form-group.col-md-12
                             button.btn.btn-default(type='button' data-dismiss='modal') Close
@@ -267,6 +303,7 @@ block script
                 let is_done = ($('#edit_done').is(':checked')) ? 1 : 0;
                 let emergency = ($('#edit_emergency').is(':checked')) ? 1 : 0;
                 let cancelled = ($('#edit_cancelled').is(':checked')) ? 1 : 0;
+                let paid = ($('#edit_paid').is(':checked')) ? 1 : 0;
 
                 $.ajax({
                     url: "/admin/worklist/update",
@@ -285,11 +322,15 @@ block script
                         remarks: remarks,
                         emergency: emergency,
                         cancelled: cancelled,
+                        paid: paid,
                     }),
                     success: function (response) {
                         if (response) {
                             $('.success').text(response.success);
                             tttt.ajax.reload();
+                            tttt1.ajax.reload();
+                            tttt2.ajax.reload();
+                            tttt3.ajax.reload();
                         }
                         $("#orderEditForm")[0].reset();
                         console.log(response)
@@ -318,11 +359,11 @@ block script
                 '</tbody>' +
                 '</table>';
         }
-        function format2(d) {
+        function format2(d, show_edit) {
             return '<table border="0" style="padding-left:50px;width:100%" class="a_table_that_needs_padding">' +
                 '<tbody>' +
                 '<tr>' +
-                '<td>Work Date : <span style="font-size:16px">' + d.work_date + '</span></td>' +
+                '<td>Work Date : <span style="font-size:16px">' + moment(d.work_date).format('DD/MM/YYYY') + '</span></td>' +
                 '<td>Refer By : <span style="font-size:16px">' + d.refer_by + '</span></td>' +
                 '</tr>' +
                 '<tr>' +
@@ -337,10 +378,18 @@ block script
                 '<tr>' +
                 '<td>Remarks: <span style="font-size:16px">' + d.remarks + '</span></td>' +
                 '</tr>' +
-                '</tbody>' +
+                '<tr>'+
+                `<td><a class="btn btn-danger" onclick="edit_action('` + d.id + `', true)" data-toggle="modal" data-target="#orderEditModal" >Assign/Edit Order</a></td>` +
+                '</tr>'+
+                '</tbody>' +    
                 '</table>';
         }
-        function edit_action(id) {
+        function edit_action(id, show = false) {
+            if(show == false){
+                $('#paid_form').addClass("gone-reduced-to-atoms");
+            }else{
+                $('#paid_form').removeClass("gone-reduced-to-atoms");
+            }
             $("#orderEditForm")[0].reset();
             $.ajax({
                 type: "GET",
@@ -358,6 +407,7 @@ block script
                     $('#edit_technicians').val(data.data.technicians);
                     $('#edit_payment_type').val(data.data.payment_type);
                     $('#edit_remarks').val(data.data.remarks);
+                    $('#edit_paid').val(data.data.paid);
                     if (data.data.is_done == 1) {
                         $('#edit_done').attr("checked", true);
                     } else {
@@ -381,6 +431,8 @@ block script
                         if (response) {
                             tttt.ajax.reload();
                             tttt1.ajax.reload();
+                            tttt2.ajax.reload();
+                            tttt3.ajax.reload();
                             alert("Deleted")
                         }
                     },
@@ -447,7 +499,6 @@ block script
                     }
                 },
                 'rowCallback': function (row, data, index) {
-                    console.log(data)
                     if (data.emergency == 1) {
                         $(row).find('td:eq(1)').css('color', 'red');
                         $(row).find('td:eq(2)').css('color', 'red');
@@ -536,7 +587,7 @@ block script
                         $('.shown').removeClass('shown')
                     });
                     // Open this row
-                    row.child(format2(row.data())).show();
+                    row.child(format2(row.data(), true)).show();
                     tr.addClass('shown');
                 }
             });
@@ -591,7 +642,62 @@ block script
                         $('.shown').removeClass('shown')
                     });
                     // Open this row
-                    row.child(format2(row.data())).show();
+                    row.child(format2(row.data(), false)).show();
+                    tr.addClass('shown');
+                }
+            });
+            var oTable3 = $('#example4').DataTable({
+                "ajax": "/admin/worklist/get_list4",
+                "columns": [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                    {"data": "workid"},
+                    {"data": "date"},
+                    {"data": "work_date"},
+                    {"data": "name"},
+                    {"data": "contact"},
+                    {"data": "work"},
+                    {"data": "address"},
+                    {"data": "technicians"},
+                    {"data": "payment_type"},
+                ],
+                "columnDefs": [
+                    {
+                        targets: 2, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                    {
+                        targets: 3, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    }
+                ],
+            });
+            tttt3 = oTable3;
+            /* Add event listener for opening and closing details
+            * Note that the indicator for showing which row is open is not controlled by DataTables,
+            * rather it is done here
+            */
+            $('#example3 tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = oTable3.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    oTable3.rows().eq(0).each(function (index) {
+                        var _row = oTable3.row(index);
+                        _row.child.hide();
+                        $('.shown').removeClass('shown')
+                    });
+                    // Open this row
+                    row.child(format2(row.data(), false)).show();
                     tr.addClass('shown');
                 }
             });

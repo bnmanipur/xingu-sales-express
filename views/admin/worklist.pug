@@ -264,6 +264,7 @@ block script
                 let is_done = ($('#edit_done').is(':checked')) ? 1 : 0;
                 let emergency = ($('#edit_emergency').is(':checked')) ? 1 : 0;
                 let cancelled = ($('#edit_cancelled').is(':checked')) ? 1 : 0;
+
                 $.ajax({
                     url: "/admin/worklist/update",
                     type: "POST",
@@ -406,7 +407,10 @@ block script
                         "data": null,
                         "defaultContent": ''
                     },
-                    {"data": "workid"},
+                    {
+                        "data": "workid",
+                        "orderable": true,
+                    },
                     {"data": "date"},
                     {"data": "work_date"},
                     {"data": "name"},
@@ -451,7 +455,8 @@ block script
                         $(row).find('td:eq(8)').css('color', 'red');
                         $(row).find('td:eq(9)').css('color', 'red');
                     }
-                }
+                },
+                "order" : [[1, "desc"]]
             });
             tttt = oTable;
             /* Add event listener for opening and closing details

@@ -142,8 +142,6 @@ exports.update = async (req, res, next) => {
         emergency
     } = req.body
 
-    is_done = is_done === true ? 1 : 0;
-
     await db.collection("worklist").doc(id).update({
         work : work,
         technicians : technicians,
@@ -154,5 +152,5 @@ exports.update = async (req, res, next) => {
         emergency : emergency,
     })
 
-    res.send({"success" : "Aye! Aye! Order added successfully!!"})
+    res.send({"success" : `Aye! Aye! Order added successfully!!`})
 }

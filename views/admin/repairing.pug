@@ -55,6 +55,7 @@ block content
                     h4.modal-title Edit Job
                 form#jobeditform
                     .modal-body
+                        input#edit_job_id(type='hidden' value='')
                         .form-group.col-md-6
                             span Date
                             input#edit_date.form-control(name='date' type='date' disabled='' placeholder='Date')
@@ -226,6 +227,7 @@ block script
                 $('.courier').toggle(this.checked);
             }).change();
             $('#edit_job_btn').click(function (event) {
+                let job_id = $("input[id=edit_job_id]").val();
                 let job_no = $("input[id=edit_job_no]").val();
                 let worked = $("input[id=edit_worked]").val();
                 let advanced_payment = $("input[id=edit_advanced_payment]").val();
@@ -242,6 +244,7 @@ block script
                     url: "/admin/repairing/edit_job",
                     type: "POST",
                     data: {
+                        id: job_id,
                         job_no: job_no,
                         worked: worked,
                         courier: courier,
@@ -255,7 +258,6 @@ block script
                         courier_returned: courier_returned,
                         courier_delivered: courier_delivered,
                         credit: credit,
-                        _token: $('#edit_token').val()
                     },
                     success: function (response) {
                         console.log(response);
@@ -297,16 +299,16 @@ block script
                 '</tr>' +
                 '<tr>' +
                 '<td colspan="4"><label style="margin-top:10px;font-size:15px">Entry by : ' + d.name + '</label></td>' +
-                '<td><a class="btn btn-danger" onclick="delete_action(' + d.jobno + ')" style="width:100px">Delete</a></td>' +
-                '<td><a class="btn btn-danger" onclick="edit_action(' + d.jobno + ')" data-toggle="modal" data-target="#jobEditModal" style="width:100px">Edit</a></td>' +
+                '<td><a class="btn btn-danger" onclick="delete_action(`' + d.id + '`)" style="width:100px">Delete</a></td>' +
+                '<td><a class="btn btn-danger" onclick="edit_action(`' + d.id + "`,`" + d.jobno + '`)" data-toggle="modal" data-target="#jobEditModal" style="width:100px">Edit</a></td>' +
                 '</tr>' +
                 '</tbody>' +
                 '</table>';
         }
-        function delete_action(jobno) {
-            if (confirm('Are you sure you want to delete job no ' + jobno + '?')) {
+        function delete_action(id) {
+            if (confirm('Are you sure you want to delete selected job?')) {
                 $.ajax({
-                    url: "/admin/repairing/delete_job?jobno=" + jobno,
+                    url: "/admin/repairing/delete_job?id=" + id,
                     type: "GET",
                     success: function (response) {
                         console.log(response);
@@ -323,12 +325,13 @@ block script
             } else {
             }
         }
-        function edit_action(jobno) {
+        function edit_action(id, jobno) {
             $("#jobeditform")[0].reset();
+            $('#edit_job_id').val(id);
             $('#edit_job_no').val(jobno);
             $.ajax({
                 type: "GET",
-                url: "/admin/repairing/get_job?jobno=" + jobno,
+                url: "/admin/repairing/get_job?id=" + id,
                 success: function (data) {
                     $('#edit_date').val(data.data.date);
                     $('#edit_customer_name').val(data.data.customer_name);
@@ -392,6 +395,13 @@ block script
                     {"data": "problem"},
                     {"data": "accessories"}
                 ],
+                "columnDefs": [
+                    {
+                        targets: 1, render: function (data) {
+                            return moment(data).format('DD/MM/YYYY');
+                        }
+                    },
+                ],
                 "createdRow": function (row, data, dataIndex) {
                     if (parseInt(data.is_courier) == 1) {
                         $(row).addClass("blue")
@@ -404,7 +414,8 @@ block script
                             $(row).addClass("green")
                         }
                     }
-                }
+                },
+                "order" : [[2, "desc"]]
             });
             tttt = oTable;
             /* Add event listener for opening and closing details
